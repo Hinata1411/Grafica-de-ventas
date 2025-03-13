@@ -43,32 +43,35 @@
             <!-- Columna derecha: Gráfica y tabla -->
             <div class="col-md-8">
                 <!-- Parte de la gráfica y filtros por fecha -->
-                <div class="card shadow p-4 mt-4">
-                    <h3 class="text-center">Gráfica de Ventas</h3>
-                    <div class="d-flex justify-content-between mb-3">
-                        <div class="w-45">
-                            <label for="filtroSucursal" class="form-label">Sucursal:</label>
-                            <select id="filtroSucursal" class="form-select">
-                                <option value="Jalapa">Jalapa</option>
-                                <option value="Eskala">Eskala</option>
-                                <option value="Santa Elena">Santa Elena</option>
-                                <option value="San Pedro Pinula">San Pedro Pinula</option>
-                                <option value="Zacapa">Zacapa</option>
-                                <option value="Poptún">Poptún</option>
-                            </select>
-                        </div>
-                        <div class="w-45">
-                            <label for="fechaInicio" class="form-label">Fecha de Inicio:</label>
-                            <input type="date" id="fechaInicio" class="form-control">
-                        </div>
-                        <div class="w-45">
-                            <label for="fechaFin" class="form-label">Fecha de Fin:</label>
-                            <input type="date" id="fechaFin" class="form-control">
-                        </div>
-                    </div>
-                    <button id="verDatos" class="btn btn-secondary w-100">Ver Datos</button>
-                    <canvas id="ventasChart"></canvas>
-                </div>
+                    <!-- Parte de la gráfica -->
+<div class="card shadow p-4 mt-4">
+    <h3 class="text-center">Gráfica de Ventas</h3>
+    <div class="d-flex justify-content-between mb-3">
+        <div class="w-45">
+            <label for="filtroSucursal" class="form-label">Sucursal:</label>
+            <select id="filtroSucursal" class="form-select">
+                <option value="Jalapa">Jalapa</option>
+                <option value="Eskala">Eskala</option>
+                <option value="Santa Elena">Santa Elena</option>
+                <option value="San Pedro Pinula">San Pedro Pinula</option>
+                <option value="Zacapa">Zacapa</option>
+                <option value="Poptún">Poptún</option>
+            </select>
+        </div>
+        <div class="w-45">
+            <label for="fechaInicio" class="form-label">Fecha de Inicio:</label>
+            <input type="date" id="fechaInicio" class="form-control">
+        </div>
+        <div class="w-45">
+            <label for="fechaFin" class="form-label">Fecha de Fin:</label>
+            <input type="date" id="fechaFin" class="form-control">
+        </div>
+    </div>
+    <button id="verDatos" class="btn btn-secondary w-100">Ver Datos</button>
+    <!-- Gráfica -->
+    <canvas id="ventasChart"></canvas>
+</div>
+
 
                 <!-- Tabla de ventas -->
                 <div class="card shadow p-4 mt-4">

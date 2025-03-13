@@ -22,30 +22,20 @@ document.getElementById("ventaForm").addEventListener("submit", async (e) => {
 });
 
 // Función para cargar ventas y actualizar la gráfica
-async function cargarVentas(sucursal, fechaInicio = null, fechaFin = null) {
+async function cargarVentas(sucursal) {
     try {
-        let q = query(collection(db, "ventas"), where("sucursal", "==", sucursal), orderBy("fecha"));
-
-        // Filtrar por fechas si se proporcionaron
-        if (fechaInicio && fechaFin) {
-            q = query(
-                collection(db, "ventas"),
-                where("sucursal", "==", sucursal),
-                where("fecha", ">=", fechaInicio),
-                where("fecha", "<=", fechaFin),
-                orderBy("fecha")
-            );
-        }
-
+        const q = query(collection(db, "ventas"), where("sucursal", "==", sucursal), orderBy("fecha"));
         const ventas = await getDocs(q);
-        const datos = ventas.docs.map(doc => ({ ...doc.data(), id: doc.id })); // Añadir el id
+        const datos = ventas.docs.map(doc => doc.data());
 
         const etiquetas = datos.map(d => d.fecha);
         const valores = datos.map(d => d.monto);
 
         const ctx = document.getElementById("ventasChart").getContext("2d");
-        if (window.miGrafica) window.miGrafica.destroy();
+        
+        if (window.miGrafica) window.miGrafica.destroy();  // Eliminar la gráfica anterior si existe
 
+        // Crear la nueva gráfica
         window.miGrafica = new Chart(ctx, {
             type: "line",
             data: {
@@ -53,11 +43,54 @@ async function cargarVentas(sucursal, fechaInicio = null, fechaFin = null) {
                 datasets: [{
                     label: `Ventas Diarias en ${sucursal}`,
                     data: valores,
-                    borderColor: "#007bff",
-                    backgroundColor: "rgba(0, 123, 255, 0.2)",
-                    fill: true,
-                    tension: 0.3
+                    borderColor: "#007bff",  // Azul para la línea
+                    backgroundColor: "rgba(0, 123, 255, 0.2)",  // Azul suave
+                    fill: true,  // Área llena
+                    tension: 0.4  // Curvatura de la línea
                 }]
+            },
+            options: {
+                responsive: true,  // Hacer la gráfica responsiva
+                maintainAspectRatio: false,  // Mantener proporciones de aspecto dinámicamente
+                plugins: {
+                    legend: {
+                        position: 'top',  // Mostrar la leyenda arriba
+                        labels: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Fecha',
+                            font: {
+                                size: 14
+                            }
+                        },
+                        grid: {
+                            display: true,  // Mostrar la cuadrícula
+                            color: "#ddd"   // Color gris claro
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Monto',
+                            font: {
+                                size: 14
+                            }
+                        },
+                        grid: {
+                            display: true,  // Mostrar la cuadrícula
+                            color: "#ddd"   // Color gris claro
+                        },
+                        beginAtZero: true  // Comenzar la escala en cero
+                    }
+                }
             }
         });
 
