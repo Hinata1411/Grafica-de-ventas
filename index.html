@@ -9,10 +9,37 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <div class="text-center">
+        <img src="img\Logosempresa.png" alt="Logo de la empresa" class="logo">
+    </div>
     <div class="container mt-5">
         <div class="row">
             <!-- Columna izquierda: Registro de ventas -->
+            
             <div class="col-md-4">
+                <div id="loginContainer" class="container mt-5">
+                    <div class="card shadow p-4">
+                        <h2 class="text-center mb-4">Iniciar Sesión</h2>
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Correo Electrónico:</label>
+                                <input type="email" id="email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Contraseña:</label>
+                                <input type="password" id="password" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+                            
+
+                        </form>
+                    </div>
+                    
+                </div>
+            
+                <div id="ventasContainer" class="container mt-5" style="display: none;">
+                    <!-- El contenido de ventas aquí (formulario de ventas, tabla, gráfica) -->
+                
                 <div class="card shadow p-4">
                     <h2 class="text-center mb-4">Registro de Ventas Diarias</h2>
                     <form id="ventaForm">
@@ -35,15 +62,40 @@
                                 <option value="Poptún">Poptún</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Ingresar Venta</button>
+                                <!-- Botón de Ingresar con más espacio -->
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Ingresar</button>
+                    
+                    <!-- Botón de Editar con más espacio -->
+                    <button type="submit" id="editarVenta" class="btn btn-warning btn-sm w-100 mb-3">Editar</button>
+                    
+                    <!-- Botón de Eliminar con más espacio -->
+                    <button type="submit" id="eliminarVenta" class="btn btn-danger btn-sm w-100">Eliminar</button>
                     </form>
                 </div>
+                <!-- Contenedor para mostrar el icono y el correo del usuario -->
+                <div id="userInfo" class="card shadow p-3 mb-3" style="display: none;">
+                    <div class="d-flex flex-column align-items-center">
+                        <!-- Icono de Persona -->
+                        
+                        <i class="bi bi-person-circle" style="font-size: 50px; margin-bottom: 10px;"></i>
+                
+                        <!-- Texto de "Sesión Iniciada" -->
+                        <h5 class="mb-1">Sesión Iniciada</h5>
+                        
+                        <!-- Correo del usuario -->
+                        <span id="userEmail" class="fs-6 mb-3"></span>
+                
+                        <!-- Botón de Cerrar Sesión -->
+                        <button id="logoutButton" class="btn btn-danger w-100">Cerrar Sesión</button>
+                    </div>
+                </div>
+                
             </div>
-
+        </div>
             <!-- Columna derecha: Gráfica y tabla -->
             <div class="col-md-8">
                 <!-- Parte de la gráfica y filtros por fecha -->
-                <div class="card shadow p-4 mt-4">
+                <div class="card shadow p-4 mt-4" id="graficaContainer">
                     <h3 class="text-center">Gráfica de Ventas</h3>
                     <div class="d-flex justify-content-between mb-3">
                         <div class="w-45">
@@ -71,11 +123,11 @@
                 </div>
 
                 <!-- Tabla de ventas -->
-                <div class="card shadow p-4 mt-4">
+                <div class="card shadow p-4 mt-4" id="tablaContainer">
                     <h3 class="text-center">Ventas Registradas</h3>
                     <div class="d-flex justify-content-center mt-3">
-                        <button id="editarVenta" class="btn btn-warning btn-sm me-2">Editar</button>
-                        <button id="eliminarVenta" class="btn btn-danger btn-sm">Eliminar</button>
+                       
+                     
                     </div>
                     <table id="tablaVentas" class="table table-bordered">
                         <thead>
@@ -93,6 +145,7 @@
             </div>
         </div>
     </div>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 body {
     font-family: Arial, sans-serif;
+    background: white;
     background-color: #f4f4f4;
     padding: 20px;
 }
@@ -21,8 +22,8 @@ form {
 }
 
 input, button, select {
-    margin: 10px 0;
-    padding: 10px;
+    margin: 20px 0;
+    padding: 20px;
     font-size: 16px;
 }
 
@@ -46,11 +47,35 @@ table {
 }
 
 @media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
-    .card {
-        margin-bottom: 10px;
+    .btn {
+        width: 100%;  /* Botones ocupan todo el ancho en dispositivos pequeños */
+        margin-top: 10px;
     }
 }
 
+
+* {
+    box-sizing: border-box;
+}
+
+
+.card, .btn {
+    border-radius: 10px;  /* Bordes redondeados */
+}
+
+#userInfo {
+    max-width: 250px;  /* Controla el tamaño del contenedor */
+    margin: 0 auto;    /* Centrado en la página */
+    background-color: #f8f9fa;  /* Color de fondo claro */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+.bi {
+    color: #007bff;  /* Color azul para el icono */
+}
+
+
+.logo {
+    width: 300px; /* Ajusta el tamaño que desees */
+    height: auto; /* Mantiene la proporción de la imagen */
+}
