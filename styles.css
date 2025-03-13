@@ -54,23 +54,3 @@ table {
     }
 }
 
-/* Hacer la gráfica responsive */
-#ventasChart {
-    width: 100% !important;
-    height: 400px !important;  /* Altura ajustada para que no sea tan alta en pantallas pequeñas */
-    max-width: 100%;
-    margin-top: 20px;
-}
-
-/* Estilo de la tarjeta de la gráfica */
-.card {
-    border-radius: 15px;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-    background: #ffffff;
-}
-
-/* Ajuste de los botones para móviles */
-.btn {
-    padding: 12px;
-    font-size: 16px;
-}
