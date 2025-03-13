@@ -1,6 +1,9 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
-    background: white;
     background-color: #f4f4f4;
     padding: 20px;
 }
@@ -10,10 +13,13 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
 }
 
 .card {
     margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 form {
@@ -23,8 +29,9 @@ form {
 
 input, button, select {
     margin: 20px 0;
-    padding: 20px;
+    padding: 15px;
     font-size: 16px;
+    border-radius: 8px;
 }
 
 canvas {
@@ -39,6 +46,7 @@ table {
 
 .table th, .table td {
     text-align: center;
+    padding: 1rem;
 }
 
 .d-flex {
@@ -46,36 +54,48 @@ table {
     justify-content: space-between;
 }
 
+#userInfo {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    display: flex;
+    flex-direction: column;  /* Para apilar los elementos verticalmente */
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#userInfo i {
+    font-size: 40px;
+    color: green;
+    margin-bottom: 10px;  /* Espaciado entre el icono y el texto */
+}
+
+#userInfo h5 {
+    font-size: 18px;
+    margin: 0;
+}
+
+#userInfo button {
+    margin-top: 10px;
+    font-size: 14px;
+    width: 100%;  /* Botón ocupa todo el ancho */
+}
+
+
+.text-center.mx-auto img.logo {
+    max-width: 250px;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto 20px;
+}
+
+/* Responsividad */
 @media (max-width: 768px) {
     .btn {
-        width: 100%;  /* Botones ocupan todo el ancho en dispositivos pequeños */
+        width: 100%;
         margin-top: 10px;
     }
-}
-
-
-* {
-    box-sizing: border-box;
-}
-
-
-.card, .btn {
-    border-radius: 10px;  /* Bordes redondeados */
-}
-
-#userInfo {
-    max-width: 250px;  /* Controla el tamaño del contenedor */
-    margin: 0 auto;    /* Centrado en la página */
-    background-color: #f8f9fa;  /* Color de fondo claro */
-    border-radius: 10px; /* Bordes redondeados */
-}
-
-.bi {
-    color: #007bff;  /* Color azul para el icono */
-}
-
-
-.logo {
-    width: 300px; /* Ajusta el tamaño que desees */
-    height: auto; /* Mantiene la proporción de la imagen */
 }

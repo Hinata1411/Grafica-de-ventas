@@ -1,8 +1,7 @@
+// Importar la referencia a la base de datos desde el archivo firebase-config.js
 import { db } from "./firebase-config.js";
 import { collection, addDoc, getDocs, query, orderBy, where, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { auth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "./firebase-config.js";
-import { Timestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";  // Asegúrate de importar Timestamp
-
+import { auth, signOut } from "./firebase-config.js";
 
 // Función para guardar una venta
 document.getElementById("ventaForm").addEventListener("submit", async (e) => {
@@ -235,60 +234,39 @@ document.addEventListener("DOMContentLoaded", () => {
     //cargarVentas(document.getElementById("sucursal").value); // Esto es solo si es necesario, ya que se debe cargar la sucursal inicialmente
 });
 
-// Mostrar el formulario de inicio de sesión
-const loginContainer = document.getElementById("loginContainer");
-const ventasContainer = document.getElementById("ventasContainer"); // Contenedor con formularios de ventas
+// Función para mostrar la información del usuario
+const showUserInfo = (user) => {
+    console.log(user);
+    document.getElementById("userInfoContainer").style.display = "block"; // Mostrar el contenedor de sesión
+    document.getElementById("userEmail").textContent = user.email; // Mostrar el correo del usuario
+};
 
-// Mostrar formulario de inicio de sesión
-loginContainer.style.display = "block";
-ventasContainer.style.display = "none";
+// Función para manejar el cierre de sesión
+document.getElementById("logoutButton").addEventListener("click", () => {
+    signOut(auth)
+        .then(() => {
+            // Ocultar contenedor de sesión y mostrar formulario de login
+            document.getElementById("userInfoContainer").style.display = "none";
+            document.getElementById("ventasContainer").style.display = "none";  // O cualquier otra lógica para la vista de ventas
+            
+            // Redirigir a la página de login
+            window.location.href = "login.html";  // Cambia a tu archivo de login
+        })
+        .catch((error) => {
+            console.error("Error al cerrar sesión:", error);
+        });
+});
 
-// Simulamos un sistema de inicio de sesión (puedes adaptarlo a Firebase o tu sistema de autenticación)
-let isLoggedIn = false;
-
-// Función para iniciar sesión
-document.getElementById("loginForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    
-    // Obtener los datos del formulario
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-
-    // Aquí puedes hacer una validación real o conectarte a una base de datos para autenticar (simulado)
-    if (email && password) {
-        // Simular inicio de sesión exitoso
-        isLoggedIn = true;
-        localStorage.setItem('email', email); // Guardar el correo en el almacenamiento local (o usar Firebase Auth)
-        
-        // Mostrar contenido de ventas y ocultar el login
-        document.getElementById("loginContainer").style.display = "none";
-        document.getElementById("ventasContainer").style.display = "block";
-        document.getElementById("userInfo").style.display = "block";
-        
-        // Mostrar el correo en el contenedor de usuario
-        document.getElementById("userEmail").innerText = email;
-    
-        limpiarLogin(); 
+// Verificar el estado de la sesión al cargar la página
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        showUserInfo(user); // Mostrar la información del usuario si está autenticado
     } else {
-        alert("Por favor, ingresa un correo y una contraseña.");
+        // Si no hay usuario, mostrar la vista de login
+        document.getElementById("userInfoContainer").style.display = "none";
     }
 });
 
-// Función para cerrar sesión
-document.getElementById("logoutButton").addEventListener("click", function () {
-    // Limpiar sesión
-    isLoggedIn = false;
-    localStorage.removeItem('email');
-    
-    // Ocultar el contenedor de ventas y mostrar el login nuevamente
-    document.getElementById("loginContainer").style.display = "block";
-    document.getElementById("ventasContainer").style.display = "none";
-    document.getElementById("userInfo").style.display = "none";
-    
-    // Limpiar el correo
-    document.getElementById("userEmail").innerText = '';
-    limpiarLogin(); 
-});
 
 // Función para limpiar los campos del formulario
 function limpiarFormulario() {
@@ -297,7 +275,5 @@ function limpiarFormulario() {
     document.getElementById("sucursal").value = "";  
 }
 
-function limpiarLogin() {
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
-}
+
+

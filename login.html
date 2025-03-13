@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Ventas</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .logo {
+            width: 250px; /* Ajusta el tamaño según prefieras */
+            height: auto;
+            display: block;
+            margin: 0 auto 20px;
+        }
+        .container {
+            max-width: 450px;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column align-items-center justify-content-center vh-100 bg-light">
+    <div id="loginContainer" class="container">
+        <div class="card shadow p-4">
+            <div class="text-center">
+                <img src="Logosempresa.png" alt="Logo de la empresa" class="logo">
+            </div>
+            <h2 class="text-center mb-4">Iniciar Sesión</h2>
+            
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico:</label>
+                    <input type="email" id="email" class="form-control form-control-lg" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña:</label>
+                    <input type="password" id="password" class="form-control form-control-lg" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+            </form>
+            
+        </div>
+    </div>
+
+   
+    <script>
+        // Simulamos un sistema de inicio de sesión (puedes adaptarlo a Firebase o tu sistema de autenticación)
+        let isLoggedIn = false;
+         //Función para iniciar sesión
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            localStorage.setItem('email', email); // Guardar el correo en el almacenamiento local (o usar Firebase Auth)
+            
+            // Aquí puedes agregar tu lógica de autenticación.
+            if (email && password) {
+                isLoggedIn = true;
+                alert('Inicio de sesión exitoso');
+                // Redireccionar a la página principal
+                window.location.href = 'index.html'; // Cambia este nombre a la página correcta
+            } else {
+                alert('Por favor, complete todos los campos');
+            }
+        });
+
+         
+    </script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
