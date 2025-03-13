@@ -1,4 +1,3 @@
-// Importar la referencia a la base de datos desde el archivo firebase-config.js
 import { db } from "./firebase-config.js";
 import { collection, addDoc, getDocs, query, orderBy, where, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { auth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "./firebase-config.js";
