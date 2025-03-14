@@ -1,69 +1,91 @@
 // ================= IMPORTACIONES =================
-import { auth, db } from "./firebase-config.js";
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { db } from "./firebase-config.js";
+import { collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// ================= EVENTO PARA REGISTRO =================
-document.getElementById("registroForm").addEventListener("submit", async function (e) {
+// ================= REFERENCIAS =================
+const registroForm = document.getElementById("registroForm");
+const errorMessage = document.getElementById("error-message");
+const successMessage = document.getElementById("success-message");
+const tablaUsuariosBody = document.querySelector("#tablaUsuarios tbody");
+const eliminarUsuarioBtn = document.getElementById("eliminarUsuarioBtn");
+
+let usuarioSeleccionadoId = null;
+
+// ================= REGISTRO DE USUARIO =================
+registroForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    // Captura de datos
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const inviteCode = document.getElementById("inviteCode").value.trim();
+    const inviteCode = document.getElementById("inviteCode").value;
 
-    // Definir rol
-    let role = "viewer";  // Por defecto
-    if (inviteCode === "ADMIN_CODE") {  // Código para administrador
-        role = "admin";
+    const rol = inviteCode ? "admin" : "viewer"; // ✅ Rol automático
+
+    try {
+        await addDoc(collection(db, "usuarios"), {
+            username,
+            email,
+            password, // ⚠️ Recuerda: en producción debería cifrarse
+            inviteCode: inviteCode || null,
+            role: rol
+        });
+
+        successMessage.style.display = "block";
+        errorMessage.style.display = "none";
+        registroForm.reset();
+        cargarUsuarios(); // Recargar la tabla
+
+    } catch (error) {
+        console.error("Error al registrar usuario: ", error);
+        errorMessage.style.display = "block";
+        successMessage.style.display = "none";
     }
+});
 
-    // Validación de campos
-    if (username && email && password) {
-        try {
-            // ✅ Crear usuario en Authentication
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+// ================= CARGAR USUARIOS EN LA TABLA =================
+async function cargarUsuarios() {
+    const querySnapshot = await getDocs(collection(db, "usuarios"));
+    tablaUsuariosBody.innerHTML = ""; // Limpiar tabla
 
-            // ✅ Guardar en Firestore con UID como ID del documento
-            await setDoc(doc(db, "usuarios", user.uid), {
-                username: username,
-                email: email,
-                uid: user.uid,
-                role: role
-            });
+    querySnapshot.forEach((docSnap) => {
+        const usuario = docSnap.data();
+        const row = tablaUsuariosBody.insertRow();
 
-            // ✅ Mensaje de éxito y redirección
-            document.getElementById("success-message").style.display = "block";
-            document.getElementById("registroForm").reset();
-            document.getElementById("error-message").style.display = "none";
+        // ✅ Mostrar aunque falten datos, con valores por defecto
+        row.insertCell(0).textContent = usuario.username || "No disponible";
+        row.insertCell(1).textContent = usuario.email || "No disponible";
+        row.insertCell(2).innerHTML = "<span style='color: gray;'>••••••••</span>"; // Contraseña oculta
+        row.insertCell(3).textContent = usuario.role || "viewer"; // Por defecto viewer si no tiene rol
 
-            // Botón de regresar según el rol
-            const regresarBtn = document.getElementById("regresar-btn");
-            regresarBtn.textContent = "Regresar";
-            regresarBtn.href = (role === "admin") ? "paginaadmin.html" : "paginavisual.html";
-            regresarBtn.style.display = "inline-block";
+        // ✅ Selección de usuario para eliminar
+        row.addEventListener("click", () => {
+            document.querySelectorAll("#tablaUsuarios tbody tr").forEach((tr) => tr.classList.remove("table-primary"));
+            row.classList.add("table-primary");
+            usuarioSeleccionadoId = docSnap.id;
+            eliminarUsuarioBtn.disabled = false;
+        });
+    });
 
-        } catch (error) {
-            console.error("❌ Error al registrar usuario: ", error);
-
-            // ✅ Mensajes de error personalizados
-            let mensajeError = "Hubo un error al registrar el usuario. Intenta de nuevo.";
-            if (error.code === "auth/email-already-in-use") {
-                mensajeError = "Este correo ya está registrado.";
-            } else if (error.code === "auth/invalid-email") {
-                mensajeError = "Correo electrónico no válido.";
-            } else if (error.code === "auth/weak-password") {
-                mensajeError = "La contraseña es demasiado débil. Usa al menos 6 caracteres.";
-            }
-
-            // Mostrar mensaje de error
-            document.getElementById("error-message").innerText = mensajeError;
-            document.getElementById("error-message").style.display = "block";
-            document.getElementById("success-message").style.display = "none";
-        }
-    } else {
-        alert("Por favor, completa todos los campos obligatorios.");
+    // Si no hay usuarios, desactivar botón eliminar
+    if (querySnapshot.empty) {
+        eliminarUsuarioBtn.disabled = true;
     }
+}
+
+// ================= ELIMINAR USUARIO =================
+eliminarUsuarioBtn.addEventListener("click", async () => {
+    if (!usuarioSeleccionadoId) return alert("Selecciona un usuario para eliminar.");
+
+    if (confirm("¿Seguro que deseas eliminar este usuario?")) {
+        await deleteDoc(doc(db, "usuarios", usuarioSeleccionadoId));
+        alert("Usuario eliminado correctamente.");
+        usuarioSeleccionadoId = null;
+        eliminarUsuarioBtn.disabled = true;
+        cargarUsuarios(); // Recargar tabla
+    }
+});
+
+// ================= CARGAR USUARIOS AL INICIO =================
+document.addEventListener("DOMContentLoaded", () => {
+    cargarUsuarios();
 });

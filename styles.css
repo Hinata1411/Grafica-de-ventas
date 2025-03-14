@@ -119,3 +119,19 @@ table {
         border-top: 3px dashed orange;
         margin-right: 8px;
     }
+
+    .logo {
+        width: 240px;  /* ✅ Tamaño base más visible */
+        height: auto;  /* ✅ Mantiene proporción */
+        display: block;
+        margin-left: 30px; /* ✅ Ligeramente a la derecha */
+    }
+    
+    @media (min-width: 1068px) { /* ✅ Pantallas grandes (computadoras) */
+        .logo {
+            width: 300px; /* ✅ Más grande en PC, pero controlado */
+            margin-left: 50px; /* ✅ Un poco más a la derecha */
+        }
+    }
+    
+    

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
     <div class="container mt-5">
         <h2>Registro de Usuario</h2>
@@ -28,14 +30,33 @@
             </div>
             <button type="submit" class="btn btn-primary">Registrar</button>
         </form>
+
+        <!-- Mensajes -->
         <div id="error-message" class="text-danger mt-3" style="display:none;">
             <p>Hubo un error al registrar al usuario. Por favor, intenta de nuevo.</p>
         </div>
         <div id="success-message" class="text-success mt-3" style="display:none;">
             <p>Usuario registrado exitosamente.</p>
-            <a id="regresar-btn" class="btn btn-secondary mt-3" style="display:none;">Regresar</a>
+            <a id="regresar-btn" href="paginaadmin.html" class="btn btn-secondary mt-3">Regresar</a>
         </div>
         <a href="paginaadmin.html" class="btn btn-info mt-3">Regresar</a>
+
+        <!-- Tabla de Usuarios -->
+        <h3 class="mt-5">Usuarios Registrados</h3>
+        <table class="table table-bordered mt-3" id="tablaUsuarios">
+            <thead>
+                <tr>
+                    <th>Nombre de Usuario</th>
+                    <th>Correo</th>
+                    <th>Contraseña</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se llenarán los usuarios -->
+            </tbody>
+        </table>
+        <button id="eliminarUsuarioBtn" class="btn btn-danger mt-3" disabled>Eliminar Usuario Seleccionado</button>
     </div>
 
     <!-- Scripts de Firebase -->
@@ -43,7 +64,8 @@
     <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
+    <!-- Script personalizado -->
     <script type="module" src="registro.js"></script>
-
 </body>
+
 </html>
