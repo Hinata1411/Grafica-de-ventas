@@ -164,32 +164,74 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
             },
             options: {
                 responsive: true,
-                interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    legend: { display: true },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                if (context.dataset.label.includes('Ventas Diarias')) {
-                                    return 'Q ' + context.parsed.y.toLocaleString('es-GT');
-                                }
-                                return null;
-                            }
-                        }
+                maintainAspectRatio: false, // Para adaptarse al contenedor
+                layout: {
+                    padding: {
+                        top: 30, // ✅ Espacio entre leyenda y gráfica
+                        right: 15,
+                        bottom: 10,
+                        left: 15
                     }
                 },
+                interaction: {
+                    mode: 'index', // ✅ Muestra el dato más cercano
+                    intersect: false // ✅ No requiere que pases EXACTO sobre el punto
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#333',
+                            font: {
+                                size: 14
+                            },
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index', // ✅ Que muestre correctamente la información
+                        intersect: false,
+                        backgroundColor: '#333',
+                        titleFont: { size: 14 },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        callbacks: {
+                            label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString()}`
+                        }
+                    },
+                    datalabels: {
+                        color: '#222',
+                        anchor: 'end',
+                        align: 'top',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        },
+                        formatter: (value) => `Q${value.toLocaleString()}`
+                    }
+                },
+                hover: {
+                    mode: 'nearest', // ✅ Mejora el hover
+                    intersect: true
+                },
                 scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#555' }
+                    },
                     y: {
                         beginAtZero: true,
+                        grid: { color: '#ddd' },
                         ticks: {
-                            callback: function (value) {
-                                return 'Q ' + value.toLocaleString('es-GT');
-                            }
+                            color: '#555',
+                            callback: (value) => `Q${value}`
                         }
                     }
                 }
             },
-            plugins: [ChartDataLabels]
+            plugins: [ChartDataLabels] // No olvides tener cargado ChartDataLabels
         });
     
         // ✅ Actualizar cuadros de total y promedio
