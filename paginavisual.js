@@ -184,7 +184,7 @@ document.getElementById("verDatos").addEventListener("click", () => {
 });
 
 document.getElementById("logoutButton").addEventListener("click", () => {
-    signOut(auth).then(() => window.location.href = "login.html").catch((error) => console.error("Error al cerrar sesión:", error));
+    signOut(auth).then(() => window.location.href = "index.html").catch((error) => console.error("Error al cerrar sesión:", error));
 });
 
 // ================= USUARIO =================

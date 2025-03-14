@@ -134,4 +134,10 @@ table {
         }
     }
     
+    #regresar-btn {
+        width: 150px; /* Ajusta al tamaño que quieras */
+        min-width: 150px; /* Asegura que nunca sea menor */
+        max-width: 150px; /* Asegura que nunca sea mayor */
+        white-space: nowrap; /* Que nunca se vaya a varias líneas */
+    }
     

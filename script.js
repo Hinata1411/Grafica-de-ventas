@@ -265,27 +265,21 @@ sucursalSelect.addEventListener("change", (e) => {
 
 // Función para manejar cierre de sesión completo con ocultar información
 logoutButton.addEventListener("click", () => {
-    signOut(auth)
-        .then(() => {
-            document.getElementById("userInfoContainer").style.display = "none";
-            document.getElementById("ventasContainer").style.display = "none";
-            window.location.href = "login.html";
-        })
-        .catch((error) => {
-            console.error("Error al cerrar sesión:", error);
-        });
+    signOut(auth).then(() => window.location.href = "index.html"); // ✅ Al cerrar sesión, ir a login (index.html)
 });
+
 
 // Función para verificar y mostrar información del usuario autenticado
 auth.onAuthStateChanged((user) => {
     const userInfoContainer = document.getElementById("userInfoContainer");
     if (user && userInfoContainer) {
         userInfoContainer.style.display = "block";
-        document.getElementById("userEmail").textContent = user.email;
+        document.getElementById("userEmail").textContent = user.email; // ✅ Correcto: email del usuario logueado
     } else if (userInfoContainer) {
         userInfoContainer.style.display = "none";
     }
 });
+
 
 // Al iniciar, cargar la fecha actual por defecto en el formulario
 document.addEventListener("DOMContentLoaded", () => {

@@ -10,6 +10,10 @@
 
 <body>
     <div class="container mt-5">
+        <!-- ✅ Botón Regresar fijo -->
+        <a id="regresar-btn" href="paginaadmin.html" class="btn btn-secondary mt-3">Regresar</a>
+
+
         <h2>Registro de Usuario</h2>
         <form id="registroForm">
             <div class="form-group">
@@ -31,17 +35,13 @@
             <button type="submit" class="btn btn-primary">Registrar</button>
         </form>
 
-        <!-- Mensajes -->
-        <div id="error-message" class="text-danger mt-3" style="display:none;">
-            <p>Hubo un error al registrar al usuario. Por favor, intenta de nuevo.</p>
-        </div>
+        <!-- ✅ Mensajes -->
+        <div id="error-message" class="text-danger mt-3" style="display:none;"></div>
         <div id="success-message" class="text-success mt-3" style="display:none;">
             <p>Usuario registrado exitosamente.</p>
-            <a id="regresar-btn" href="paginaadmin.html" class="btn btn-secondary mt-3">Regresar</a>
         </div>
-        <a href="paginaadmin.html" class="btn btn-info mt-3">Regresar</a>
 
-        <!-- Tabla de Usuarios -->
+        <!-- ✅ Tabla de Usuarios -->
         <h3 class="mt-5">Usuarios Registrados</h3>
         <table class="table table-bordered mt-3" id="tablaUsuarios">
             <thead>
@@ -52,10 +52,10 @@
                     <th>Rol</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- Aquí se llenarán los usuarios -->
-            </tbody>
+            <tbody></tbody>
         </table>
+
+        <!-- ✅ Botón eliminar -->
         <button id="eliminarUsuarioBtn" class="btn btn-danger mt-3" disabled>Eliminar Usuario Seleccionado</button>
     </div>
 
