@@ -112,61 +112,37 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
         const ctx = document.getElementById("ventasChart").getContext("2d");
         if (window.miGrafica) window.miGrafica.destroy();
     
-        // ✅ Formatear fechas dd/mm
+        const totalVentas = valores.reduce((acc, val) => acc + val, 0);
+        const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
+    
+        const coloresSucursales = {
+            "Santa Elena": "#28a745", "Eskala": "#28a745", "San Pedro Pinula": "#28a745",
+            "Jalapa": "#dc3545", "Zacapa": "#fd7e14", "Poptún": "#fd7e14"
+        };
+        const colorGrafica = coloresSucursales[sucursal] || "#6c757d";
+    
+        // ✅ Formatear las fechas solo como dd/mm
         const fechasFormateadas = fechas.map(fecha => {
             const [dia, mes] = fecha.split('/');
             return `${dia}/${mes}`;
         });
     
-        // ✅ Calcular promedio
-        const totalVentas = valores.reduce((acc, val) => acc + val, 0);
-        const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
-    
-        // ✅ Colores por sucursal
-        const coloresSucursales = {
-            "Santa Elena": "#28a745",  // Verde
-            "Eskala": "#28a745",
-            "San Pedro Pinula": "#28a745",
-            "Jalapa": "#dc3545",       // Rojo
-            "Zacapa": "#fd7e14",       // Naranja
-            "Poptún": "#fd7e14"        // Azul
-        };
-        const colorGrafica = coloresSucursales[sucursal] || "#6c757d";
-
-        // ✅ Contenedor donde va la leyenda
-        const leyendaGrafica = document.getElementById("leyendaGrafica");
-
-        // ✅ Insertar leyenda con colores dinámicos
-        leyendaGrafica.innerHTML = `
-            <span class="legend-label">
-                <span class="legend-box" style="background-color: ${colorGrafica};"></span> 
-                Ventas Diarias en ${sucursal}
-            </span>
-            <span class="legend-label">
-                <span class="legend-line"></span> 
-                Promedio de Ventas
-            </span>
-        `;
-
-    
-        // ✅ Crear gráfica
         window.miGrafica = new Chart(ctx, {
+            type: 'line',
             data: {
-                labels: fechasFormateadas,
+                labels: fechasFormateadas, // ✅ Usar las fechas formateadas aquí
                 datasets: [
                     {
-                        label: `Ventas en ${sucursal}`, // ✅ Solo esta leyenda se mostrará
+                        label: `Ventas Diarias en ${sucursal}`,
                         data: valores,
-                        backgroundColor: colorGrafica,
                         borderColor: colorGrafica,
+                        backgroundColor: colorGrafica,
                         borderWidth: 3,
-                        type: "line",
                         tension: 0.3,
                         pointBackgroundColor: colorGrafica,
                         pointRadius: 5,
-                        order: 2,
                         datalabels: {
-                            display: true, // ✅ Solo para ventas
+                            display: true,
                             color: 'black',
                             anchor: 'end',
                             align: 'top',
@@ -175,37 +151,29 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
                         }
                     },
                     {
-                        label: '', // ❌ Sin texto en leyenda
-                        data: Array(valores.length).fill(promedioVentas), // Línea recta de promedio
-                        type: 'line',
+                        label: 'Promedio de Ventas',
+                        data: Array(valores.length).fill(promedioVentas),
                         borderColor: 'orange',
                         backgroundColor: 'transparent',
                         borderWidth: 2,
-                        borderDash: [10, 5], // Línea punteada
-                        pointRadius: 0, // Sin puntos
-                        order: 1,
-                        datalabels: {
-                            display: false // ❌ NO mostrar etiquetas en la línea promedio
-                        }
+                        borderDash: [10, 5],
+                        pointRadius: 0,
+                        datalabels: { display: false }
                     }
                 ]
             },
             options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
                 plugins: {
-                    legend: {
-                        display: true,
-                        labels: {
-                            filter: function (legendItem) {
-                                // ✅ Ocultar solo línea promedio de la leyenda
-                                return legendItem.text !== '';
-                            }
-                        }
-                    },
+                    legend: { display: true },
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                let value = context.parsed.y;
-                                return 'Q ' + value.toLocaleString('es-GT');
+                                if (context.dataset.label.includes('Ventas Diarias')) {
+                                    return 'Q ' + context.parsed.y.toLocaleString('es-GT');
+                                }
+                                return null;
                             }
                         }
                     }
@@ -221,13 +189,14 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
                     }
                 }
             },
-            plugins: [ChartDataLabels] // ✅ Activa etiquetas pero controladas por dataset
+            plugins: [ChartDataLabels]
         });
     
         // ✅ Actualizar cuadros de total y promedio
         document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
         document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
     }
+    
     
 
 // ================= EVENTOS =================
@@ -325,5 +294,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Cargar sucursal por defecto si quieres cargar algo inicial
     const sucursalPorDefecto = sucursalSelect.value;
-    // cargarVentas(sucursalPorDefecto, fechaActual, fechaActual); // Descomenta si quieres cargar algo al inicio
+    
 });
