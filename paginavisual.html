@@ -10,82 +10,41 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 
+    <!-- ✅ Estilos personalizados -->
+    <link rel="stylesheet" href="styles.css">
+
     <!-- ✅ Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
-    <style>
-        /* ✅ ESTILOS GENERALES RESPONSIVE */
-        body {
-            overflow-x: hidden;
-        }
-
-        button,
-        a.btn {
-            max-width: 100%;
-            white-space: nowrap;
-        }
-
-        canvas {
-            width: 100% !important;
-            height: auto !important;
-            max-height: 400px;
-        }
-
-        .card {
-            border-radius: 12px;
-        }
-
-        .logo {
-            max-width: 180px;
-            height: auto;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        /* Opcional: ajustar padding y margen en móvil */
-        @media (max-width: 576px) {
-            .p-4 {
-                padding: 1rem !important;
-            }
-
-            .py-3 {
-                padding-top: 1rem !important;
-                padding-bottom: 1rem !important;
-            }
-
-            .px-5 {
-                padding-left: 1rem !important;
-                padding-right: 1rem !important;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
-    <!-- Header con logo y usuario -->
-    <div class="container-fluid d-flex justify-content-between align-items-center py-3 px-5">
-        <div class="text-center mx-auto">
+    <!-- ✅ CONTENEDOR GLOBAL -->
+    <div class="container-fluid">
+
+        <!-- ✅ LOGO CENTRADO -->
+        <div class="text-center mt-3">
             <img src="Logosempresa.png" alt="Logo" class="logo">
         </div>
-        <div id="userInfoContainer" class="d-flex align-items-center gap-3" style="display: none;">
-            <i id="userIcon" class="bi bi-person-circle" style="font-size: 40px; color: orange;"></i>
-            <div class="d-flex flex-column">
-                <h5 class="mb-1" style="font-size: 16px;">Sesión Iniciada</h5>
-                <span id="userEmail" class="fs-6 mb-2"></span>
-                <button id="logoutButton" class="btn btn-danger btn-sm mb-2">Cerrar Sesión</button>
+
+        <!-- ✅ USUARIO (ICONO, EMAIL, BOTÓN LOGOUT y BOTÓN USUARIOS) -->
+        <div class="d-flex justify-content-end mt-3 mb-3">
+            <div id="userInfoContainer" style="display: none;">
+                <i id="userIcon" class="bi bi-person-circle"></i>
+                <div>
+                    <strong id="userEmail"></strong><br>
+                    <button id="logoutButton" class="btn btn-outline-danger btn-sm mt-2">Cerrar Sesión</button>
+                    <a href="registro.html" class="btn btn-outline-secondary btn-sm mt-2">Usuarios</a>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Filtros -->
-    <div class="container-fluid mt-4">
-        <div class="card shadow p-4">
+        <!-- ✅ FILTROS Y GRÁFICA -->
+        <div class="card shadow p-4 card-graph">
             <h3 class="text-center mb-4">Gráfica de Ventas</h3>
 
+            <!-- Filtros -->
             <div class="row mb-3">
                 <div class="col-12 col-md-4 mb-3">
                     <label for="filtroSucursal" class="form-label">Sucursal:</label>
@@ -108,31 +67,32 @@
                 </div>
             </div>
 
+            <!-- Botón -->
             <button id="verDatos" class="btn btn-secondary w-100 mb-4">Ver Datos</button>
 
-            <!-- Gráfica -->
-            <div style="position: relative; width: 100%; min-height: 300px; height: 400px;">
+            <!-- Gráfica con espacio definido -->
+            <div class="chart-container" style="position: relative; width: 100%; min-height: 300px;">
                 <canvas id="ventasChart"></canvas>
             </div>
         </div>
 
-        <!-- Resumen -->
+        <!-- ✅ CARDS DE TOTALES -->
         <div class="row mt-4 text-center">
             <div class="col-12 col-md-6 mb-3">
                 <div class="card bg-success text-white p-3 shadow">
                     <h5>Total de Ventas</h5>
-                    <p id="totalVentas" style="font-size: 1.5rem;">Q0.00</p>
+                    <p id="totalVentas">Q0.00</p>
                 </div>
             </div>
             <div class="col-12 col-md-6 mb-3">
                 <div class="card bg-warning text-white p-3 shadow">
                     <h5>Promedio de Ventas</h5>
-                    <p id="promedioVentas" style="font-size: 1.5rem;">Q0.00</p>
+                    <p id="promedioVentas">Q0.00</p>
                 </div>
             </div>
         </div>
 
-        <!-- Tabla responsive -->
+        <!-- ✅ TABLA DE VENTAS -->
         <div class="card shadow p-4 mt-4">
             <h3 class="text-center">Ventas Registradas</h3>
             <div class="table-responsive">
@@ -148,10 +108,12 @@
                 </table>
             </div>
         </div>
+
     </div>
 
-    <!-- ✅ Script de JavaScript -->
+    <!-- ✅ Script funcional -->
     <script type="module" src="paginavisual.js"></script>
+
 </body>
 
 </html>

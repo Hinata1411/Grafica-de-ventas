@@ -110,30 +110,64 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
         },
         options: {
             responsive: true,
-            interaction: { mode: 'index', intersect: false }, // ✅ Interacción cómoda
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 30, // ✅ Espacio entre leyenda y gráfica
+                    right: 15,
+                    bottom: 10,
+                    left: 15
+                }
+            },
             plugins: {
-                legend: { display: true }, // ✅ Leyenda activa e interactiva
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: '#333',
+                        font: {
+                            size: 14
+                        },
+                        padding: 20 // ✅ Espacio entre leyenda y borde superior
+                    }
+                },
+                datalabels: {
+                    color: '#222',
+                    anchor: 'end',
+                    align: 'top',
+                    font: {
+                        size: 12,
+                        weight: 'bold'
+                    },
+                    formatter: (value) => `Q${value.toLocaleString()}`
+                },
                 tooltip: {
+                    enabled: true,
+                    backgroundColor: '#333',
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 12 },
+                    padding: 10,
                     callbacks: {
-                        label: function (context) {
-                            // ✅ Mostrar solo ventas diarias en tooltip
-                            if (context.dataset.label === `Ventas Diarias en ${sucursal}`) {
-                                return 'Q ' + context.parsed.y.toLocaleString('es-GT');
-                            }
-                            return null; // ❌ Ocultar tooltip del promedio
-                        }
+                        label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString()}`
                     }
                 }
             },
             scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#555' }
+                },
                 y: {
                     beginAtZero: true,
+                    grid: { color: '#ddd' },
                     ticks: {
-                        callback: (value) => 'Q ' + value.toLocaleString('es-GT')
+                        color: '#555',
+                        callback: (value) => `Q${value}`
                     }
                 }
             }
-        },
+        }
+        ,
         plugins: [ChartDataLabels]
     });
 
