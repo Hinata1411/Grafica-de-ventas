@@ -175,3 +175,22 @@ canvas {
 .chart-container {
     margin-top: 30px;
 }
+
+/* Gráfica separada y con aire */
+.card-graph {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+/* Separación interna de la gráfica */
+.chart-container {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+/* Gráfica responsive */
+canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 400px;
+}
