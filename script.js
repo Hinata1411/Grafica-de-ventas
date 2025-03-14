@@ -129,9 +129,25 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
             "San Pedro Pinula": "#28a745",
             "Jalapa": "#dc3545",       // Rojo
             "Zacapa": "#fd7e14",       // Naranja
-            "Poptún": "#007bff"        // Azul
+            "Poptún": "#fd7e14"        // Azul
         };
         const colorGrafica = coloresSucursales[sucursal] || "#6c757d";
+
+        // ✅ Contenedor donde va la leyenda
+        const leyendaGrafica = document.getElementById("leyendaGrafica");
+
+        // ✅ Insertar leyenda con colores dinámicos
+        leyendaGrafica.innerHTML = `
+            <span class="legend-label">
+                <span class="legend-box" style="background-color: ${colorGrafica};"></span> 
+                Ventas Diarias en ${sucursal}
+            </span>
+            <span class="legend-label">
+                <span class="legend-line"></span> 
+                Promedio de Ventas
+            </span>
+        `;
+
     
         // ✅ Crear gráfica
         window.miGrafica = new Chart(ctx, {
