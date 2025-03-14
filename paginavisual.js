@@ -47,7 +47,6 @@ async function cargarVentas(sucursal, fechaInicio = null, fechaFin = null) {
             fechaIter.setDate(fechaIter.getDate() + 1);
         }
 
-        // Colores por sucursal
         const coloresSucursales = {
             "Santa Elena": "#28a745",
             "Eskala": "#28a745",
@@ -58,11 +57,9 @@ async function cargarVentas(sucursal, fechaInicio = null, fechaFin = null) {
         };
         const colorGrafica = coloresSucursales[sucursal] || "#007bff";
 
-        // Mostrar gráfica y tabla
+        // Mostrar gráfica, tabla y resumen
         mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica);
         mostrarTablaVentas(fechas, valores, sucursal);
-
-        // Mostrar resumen total y promedio
         calcularTotalesYPromedios(valores);
 
     } catch (error) {
@@ -73,27 +70,75 @@ async function cargarVentas(sucursal, fechaInicio = null, fechaFin = null) {
 
 // ================= FUNCIONES PARA MOSTRAR =================
 
-// Gráfica de ventas
+// Gráfica de ventas con línea promedio (sin etiquetas de promedio)
 function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
     const ctx = document.getElementById("ventasChart").getContext("2d");
     if (window.miGrafica) window.miGrafica.destroy();
 
+    // Calcular promedio
+    const totalVentas = valores.reduce((acc, val) => acc + val, 0);
+    const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
+
     window.miGrafica = new Chart(ctx, {
-        type: "bar",
         data: {
             labels: fechas,
-            datasets: [{
-                label: `Ventas Diarias en ${sucursal}`,
-                data: valores,
-                borderColor: colorGrafica,
-                backgroundColor: colorGrafica,
-                borderWidth: 1
-            }]
+            datasets: [
+                {
+                    label: `Ventas Diarias en ${sucursal}`,
+                    data: valores,
+                    backgroundColor: colorGrafica,
+                    borderColor: colorGrafica,
+                    borderWidth: 3,
+                    type: "line",
+                    tension: 0.3,
+                    pointBackgroundColor: colorGrafica,
+                    pointRadius: 5,
+                    datalabels: {
+                        display: true, // ✅ Mostrar solo en ventas
+                        color: 'black',
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: (value) => value > 0 ? 'Q ' + value.toLocaleString('es-GT') : '',
+                        font: { weight: 'bold', size: 12 }
+                    }
+                },
+                {
+                    label: '', // ❌ Sin leyenda
+                    data: Array(valores.length).fill(promedioVentas), // Línea de promedio
+                    type: 'line',
+                    borderColor: 'orange',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderDash: [10, 5],
+                    pointRadius: 0,
+                    datalabels: { display: false } // ❌ No mostrar valores
+                }
+            ]
         },
         options: {
-            plugins: { legend: { display: true } },
-            scales: { y: { beginAtZero: true } }
-        }
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        filter: (legendItem) => legendItem.text !== '' // ❌ Quitar línea promedio
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => 'Q ' + context.parsed.y.toLocaleString('es-GT')
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: (value) => 'Q ' + value.toLocaleString('es-GT')
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels] // ✅ Usar plugin de etiquetas
     });
 }
 
@@ -118,12 +163,10 @@ function mostrarTablaVentas(fechas, valores, sucursal) {
         }
     });
 
-    // Total de ventas
     const totalRow = tablaVentasBody.insertRow();
     totalRow.insertCell(0).innerHTML = "<strong>Total</strong>";
     totalRow.insertCell(1).textContent = "";
     totalRow.insertCell(2).innerHTML = `<strong>${totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong>`;
-    totalRow.style.fontWeight = "bold";
     totalRow.style.backgroundColor = "#f8f9fa";
 }
 
@@ -146,7 +189,6 @@ if (verDatosBtn) {
         const sucursal = document.getElementById("filtroSucursal").value;
         const fechaInicio = document.getElementById("fechaInicio").value;
         const fechaFin = document.getElementById("fechaFin").value;
-
         cargarVentas(sucursal, fechaInicio, fechaFin);
     });
 }
@@ -157,9 +199,7 @@ if (logoutButton) {
     logoutButton.addEventListener("click", () => {
         signOut(auth).then(() => {
             window.location.href = "login.html";
-        }).catch((error) => {
-            console.error("Error al cerrar sesión:", error);
-        });
+        }).catch((error) => console.error("Error al cerrar sesión:", error));
     });
 }
 

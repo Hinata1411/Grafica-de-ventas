@@ -108,55 +108,111 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
         document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
     }
 
-
-function mostrarGraficaVentas(fechas, valores, sucursal) {
-    const ctx = document.getElementById("ventasChart").getContext("2d");
-    if (window.miGrafica) window.miGrafica.destroy();
-
-    // ✅ Mapear las fechas para que muestren solo dd/mm
-    const fechasFormateadas = fechas.map(fecha => {
-        const [dia, mes, anio] = fecha.split('/');
-        return `${dia}/${mes}`; // Solo dd/mm
-    });
-
-    // ✅ Definir colores por sucursal
-    const coloresSucursales = {
-        "Santa Elena": "#28a745",  // Verde
-        "Eskala": "#28a745",       // Verde
-        "San Pedro Pinula": "#28a745", // Verde
-        "Jalapa": "#dc3545",       // Rojo
-        "Zacapa": "#fd7e14",       // Naranja
-        "Poptún": "#007bff"        // Azul
-    };
-
-    // Color según sucursal o uno por defecto
-    const colorGrafica = coloresSucursales[sucursal] || "#6c757d"; // Gris por defecto
-
-    // ✅ Crear la gráfica
-    window.miGrafica = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: fechasFormateadas, // Usar fechas dd/mm
-            datasets: [{
-                label: `Ventas en ${sucursal}`,
-                data: valores,
-                backgroundColor: colorGrafica
-            }]
-        },
-        options: {
-            plugins: {
-                legend: { display: true }
+    function mostrarGraficaVentas(fechas, valores, sucursal) {
+        const ctx = document.getElementById("ventasChart").getContext("2d");
+        if (window.miGrafica) window.miGrafica.destroy();
+    
+        // ✅ Formatear fechas dd/mm
+        const fechasFormateadas = fechas.map(fecha => {
+            const [dia, mes] = fecha.split('/');
+            return `${dia}/${mes}`;
+        });
+    
+        // ✅ Calcular promedio
+        const totalVentas = valores.reduce((acc, val) => acc + val, 0);
+        const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
+    
+        // ✅ Colores por sucursal
+        const coloresSucursales = {
+            "Santa Elena": "#28a745",  // Verde
+            "Eskala": "#28a745",
+            "San Pedro Pinula": "#28a745",
+            "Jalapa": "#dc3545",       // Rojo
+            "Zacapa": "#fd7e14",       // Naranja
+            "Poptún": "#007bff"        // Azul
+        };
+        const colorGrafica = coloresSucursales[sucursal] || "#6c757d";
+    
+        // ✅ Crear gráfica
+        window.miGrafica = new Chart(ctx, {
+            data: {
+                labels: fechasFormateadas,
+                datasets: [
+                    {
+                        label: `Ventas en ${sucursal}`, // ✅ Solo esta leyenda se mostrará
+                        data: valores,
+                        backgroundColor: colorGrafica,
+                        borderColor: colorGrafica,
+                        borderWidth: 3,
+                        type: "line",
+                        tension: 0.3,
+                        pointBackgroundColor: colorGrafica,
+                        pointRadius: 5,
+                        order: 2,
+                        datalabels: {
+                            display: true, // ✅ Solo para ventas
+                            color: 'black',
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: (value) => value > 0 ? 'Q ' + value.toLocaleString('es-GT') : '',
+                            font: { weight: 'bold', size: 12 }
+                        }
+                    },
+                    {
+                        label: '', // ❌ Sin texto en leyenda
+                        data: Array(valores.length).fill(promedioVentas), // Línea recta de promedio
+                        type: 'line',
+                        borderColor: 'orange',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        borderDash: [10, 5], // Línea punteada
+                        pointRadius: 0, // Sin puntos
+                        order: 1,
+                        datalabels: {
+                            display: false // ❌ NO mostrar etiquetas en la línea promedio
+                        }
+                    }
+                ]
             },
-            scales: {
-                y: {
-                    beginAtZero: true
+            options: {
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            filter: function (legendItem) {
+                                // ✅ Ocultar solo línea promedio de la leyenda
+                                return legendItem.text !== '';
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let value = context.parsed.y;
+                                return 'Q ' + value.toLocaleString('es-GT');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return 'Q ' + value.toLocaleString('es-GT');
+                            }
+                        }
+                    }
                 }
-            }
-        }
-    });
-}
-
-
+            },
+            plugins: [ChartDataLabels] // ✅ Activa etiquetas pero controladas por dataset
+        });
+    
+        // ✅ Actualizar cuadros de total y promedio
+        document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+        document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+    }
+    
 
 // ================= EVENTOS =================
 
