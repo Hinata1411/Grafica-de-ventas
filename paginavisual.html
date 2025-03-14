@@ -9,11 +9,59 @@
     <!-- ✅ Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
 
     <!-- ✅ Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <style>
+        /* ✅ ESTILOS GENERALES RESPONSIVE */
+        body {
+            overflow-x: hidden;
+        }
+
+        button,
+        a.btn {
+            max-width: 100%;
+            white-space: nowrap;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 400px;
+        }
+
+        .card {
+            border-radius: 12px;
+        }
+
+        .logo {
+            max-width: 180px;
+            height: auto;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        /* Opcional: ajustar padding y margen en móvil */
+        @media (max-width: 576px) {
+            .p-4 {
+                padding: 1rem !important;
+            }
+
+            .py-3 {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+
+            .px-5 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -34,11 +82,12 @@
     </div>
 
     <!-- Filtros -->
-    <div class="container mt-5">
+    <div class="container-fluid mt-4">
         <div class="card shadow p-4">
             <h3 class="text-center mb-4">Gráfica de Ventas</h3>
-            <div class="d-flex justify-content-between mb-3">
-                <div class="w-45">
+
+            <div class="row mb-3">
+                <div class="col-12 col-md-4 mb-3">
                     <label for="filtroSucursal" class="form-label">Sucursal:</label>
                     <select id="filtroSucursal" class="form-select">
                         <option value="Jalapa">Jalapa</option>
@@ -49,30 +98,33 @@
                         <option value="Poptún">Poptún</option>
                     </select>
                 </div>
-                <div class="w-45">
+                <div class="col-12 col-md-4 mb-3">
                     <label for="fechaInicio" class="form-label">Fecha de Inicio:</label>
                     <input type="date" id="fechaInicio" class="form-control">
                 </div>
-                <div class="w-45">
+                <div class="col-12 col-md-4 mb-3">
                     <label for="fechaFin" class="form-label">Fecha de Fin:</label>
                     <input type="date" id="fechaFin" class="form-control">
                 </div>
             </div>
-            <button id="verDatos" class="btn btn-secondary w-100">Ver Datos</button>
-            <canvas id="ventasChart" class="mt-4"></canvas>
+
+            <button id="verDatos" class="btn btn-secondary w-100 mb-4">Ver Datos</button>
+
+            <!-- Gráfica -->
+            <div style="position: relative; width: 100%; min-height: 300px; height: 400px;">
+                <canvas id="ventasChart"></canvas>
+            </div>
         </div>
 
         <!-- Resumen -->
         <div class="row mt-4 text-center">
-            <!-- Total de ventas -->
-            <div class="col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-3">
                 <div class="card bg-success text-white p-3 shadow">
                     <h5>Total de Ventas</h5>
                     <p id="totalVentas" style="font-size: 1.5rem;">Q0.00</p>
                 </div>
             </div>
-            <!-- Promedio de ventas -->
-            <div class="col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-3">
                 <div class="card bg-warning text-white p-3 shadow">
                     <h5>Promedio de Ventas</h5>
                     <p id="promedioVentas" style="font-size: 1.5rem;">Q0.00</p>
@@ -80,22 +132,25 @@
             </div>
         </div>
 
-        <!-- Tabla -->
+        <!-- Tabla responsive -->
         <div class="card shadow p-4 mt-4">
             <h3 class="text-center">Ventas Registradas</h3>
-            <table id="tablaVentas" class="table table-bordered mt-3">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Sucursal</th>
-                        <th>Monto</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="tablaVentas" class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Sucursal</th>
+                            <th>Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
+    <!-- ✅ Script de JavaScript -->
     <script type="module" src="paginavisual.js"></script>
 </body>
 

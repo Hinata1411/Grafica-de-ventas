@@ -1,14 +1,25 @@
+/* ======================================
+   RESET Y ESTILOS BASE GENERALES
+====================================== */
+
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     padding: 20px;
+    overflow-x: hidden; /* Evitar desbordamientos horizontales */
 }
 
-.container {
+/* ======================================
+   CONTENEDORES Y CARDS
+====================================== */
+
+.container, .container-fluid {
     background: white;
     padding: 20px;
     border-radius: 10px;
@@ -20,7 +31,13 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    border: none;
+    padding: 1rem;
 }
+
+/* ======================================
+   FORMULARIOS, INPUTS Y BOTONES
+====================================== */
 
 form {
     display: flex;
@@ -28,48 +45,75 @@ form {
 }
 
 input, button, select {
-    margin: 20px 0;
+    margin: 10px 0;
     padding: 15px;
     font-size: 16px;
     border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%; /* Adaptables */
 }
 
-canvas {
-    margin-top: 20px;
-    width: 100% !important;
-    height: 400px !important;
+button, a.btn {
+    max-width: 100%;
+    white-space: nowrap;
+    font-weight: 500;
 }
 
-table {
+/* Botón regresar con ancho fijo */
+#regresar-btn {
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
+    white-space: nowrap;
+}
+
+/* ======================================
+   TABLAS
+====================================== */
+
+.table-responsive {
+    overflow-x: auto;
     margin-top: 20px;
 }
 
 .table th, .table td {
     text-align: center;
     padding: 1rem;
+    vertical-align: middle;
 }
 
-.d-flex {
-    display: flex;
-    justify-content: space-between;
+/* ======================================
+   GRÁFICAS (CANVAS)
+====================================== */
+
+canvas {
+    margin-top: 20px;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 400px;
 }
+
+/* ======================================
+   SECCIÓN USUARIO (HEADER)
+====================================== */
 
 #userInfo {
     position: absolute;
     left: 20px;
     top: 20px;
     display: flex;
-    flex-direction: column;  /* Para apilar los elementos verticalmente */
+    flex-direction: column;
     align-items: center;
     background-color: #f8f9fa;
     padding: 10px;
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 #userInfo i {
     font-size: 40px;
     color: green;
-    margin-bottom: 10px;  /* Espaciado entre el icono y el texto */
+    margin-bottom: 10px;
 }
 
 #userInfo h5 {
@@ -80,9 +124,12 @@ table {
 #userInfo button {
     margin-top: 10px;
     font-size: 14px;
-    width: 100%;  /* Botón ocupa todo el ancho */
+    width: 100%;
 }
 
+/* ======================================
+   LOGO Y HEADER
+====================================== */
 
 .text-center.mx-auto img.logo {
     max-width: 250px;
@@ -92,52 +139,83 @@ table {
     margin: 0 auto 20px;
 }
 
-/* Responsividad */
+/* Ajuste del logo */
+.logo {
+    width: 240px;
+    height: auto;
+    display: block;
+    margin-left: 30px;
+}
+
+/* Logo más grande en pantallas amplias */
+@media (min-width: 1068px) {
+    .logo {
+        width: 300px;
+        margin-left: 50px;
+    }
+}
+
+/* ======================================
+   LEYENDAS PERSONALIZADAS PARA GRÁFICAS
+====================================== */
+
+.legend-label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 20px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.legend-box {
+    width: 20px;
+    height: 12px;
+    margin-right: 8px;
+}
+
+.legend-line {
+    width: 20px;
+    border-top: 3px dashed orange;
+    margin-right: 8px;
+}
+
+/* ======================================
+   RESPONSIVIDAD GENERAL
+====================================== */
+
+/* Botones full width en móvil */
 @media (max-width: 768px) {
     .btn {
         width: 100%;
         margin-top: 10px;
     }
+
+    .p-4 {
+        padding: 1rem !important;
+    }
+
+    .py-3 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .px-5 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
 }
 
-    .legend-label {
-        display: inline-flex;
-        align-items: center;
-        margin-right: 20px;
-        font-weight: bold;
-        font-size: 14px;
-    }
+/* ======================================
+   TARJETAS DE RESUMEN
+====================================== */
 
-    .legend-box {
-        width: 20px;
-        height: 12px;
-        margin-right: 8px;
-    }
+.card h5 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
 
-    .legend-line {
-        width: 20px;
-        border-top: 3px dashed orange;
-        margin-right: 8px;
-    }
-
-    .logo {
-        width: 240px;  /* ✅ Tamaño base más visible */
-        height: auto;  /* ✅ Mantiene proporción */
-        display: block;
-        margin-left: 30px; /* ✅ Ligeramente a la derecha */
-    }
-    
-    @media (min-width: 1068px) { /* ✅ Pantallas grandes (computadoras) */
-        .logo {
-            width: 300px; /* ✅ Más grande en PC, pero controlado */
-            margin-left: 50px; /* ✅ Un poco más a la derecha */
-        }
-    }
-    
-    #regresar-btn {
-        width: 150px; /* Ajusta al tamaño que quieras */
-        min-width: 150px; /* Asegura que nunca sea menor */
-        max-width: 150px; /* Asegura que nunca sea mayor */
-        white-space: nowrap; /* Que nunca se vaya a varias líneas */
-    }
-    
+.card p {
+    font-size: 1.6rem;
+    margin: 0;
+    font-weight: bold;
+}
