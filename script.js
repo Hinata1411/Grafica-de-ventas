@@ -121,7 +121,6 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
         };
         const colorGrafica = coloresSucursales[sucursal] || "#6c757d";
     
-        // ✅ Formatear las fechas solo como dd/mm
         const fechasFormateadas = fechas.map(fecha => {
             const [dia, mes] = fecha.split('/');
             return `${dia}/${mes}`;
@@ -130,7 +129,7 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
         window.miGrafica = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: fechasFormateadas, // ✅ Usar las fechas formateadas aquí
+                labels: fechasFormateadas,
                 datasets: [
                     {
                         label: `Ventas Diarias en ${sucursal}`,
@@ -140,15 +139,7 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
                         borderWidth: 3,
                         tension: 0.3,
                         pointBackgroundColor: colorGrafica,
-                        pointRadius: 5,
-                        datalabels: {
-                            display: true,
-                            color: 'black',
-                            anchor: 'end',
-                            align: 'top',
-                            formatter: (value) => value > 0 ? 'Q ' + value.toLocaleString('es-GT') : '',
-                            font: { weight: 'bold', size: 12 }
-                        }
+                        pointRadius: 5
                     },
                     {
                         label: 'Promedio de Ventas',
@@ -158,24 +149,20 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
                         borderWidth: 2,
                         borderDash: [10, 5],
                         pointRadius: 0,
-                        datalabels: { display: false }
+                        datalabels: { display: false }, // ❌ Quitar etiquetas de valor
+                        tooltip: { enabled: false } // ❌ Quitar tooltip del promedio
                     }
                 ]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, // Para adaptarse al contenedor
+                maintainAspectRatio: false, // ✅ Adaptable
                 layout: {
-                    padding: {
-                        top: 30, // ✅ Espacio entre leyenda y gráfica
-                        right: 15,
-                        bottom: 10,
-                        left: 15
-                    }
+                    padding: { top: 30, right: 15, bottom: 10, left: 15 }
                 },
                 interaction: {
-                    mode: 'index', // ✅ Muestra el dato más cercano
-                    intersect: false // ✅ No requiere que pases EXACTO sobre el punto
+                    mode: 'index', // ✅ Datos claros sin estar exacto
+                    intersect: false
                 },
                 plugins: {
                     legend: {
@@ -183,38 +170,34 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
                         position: 'top',
                         labels: {
                             color: '#333',
-                            font: {
-                                size: 14
-                            },
+                            font: { size: 14 },
                             padding: 20
                         }
                     },
                     tooltip: {
                         enabled: true,
-                        mode: 'index', // ✅ Que muestre correctamente la información
+                        mode: 'index',
                         intersect: false,
                         backgroundColor: '#333',
                         titleFont: { size: 14 },
                         bodyFont: { size: 12 },
                         padding: 10,
+                        filter: (tooltipItem) => tooltipItem.dataset.label.includes('Ventas Diarias'), // ✅ Solo mostrar Ventas Diarias
                         callbacks: {
-                            label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString()}`
+                            label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString('es-GT')}` // ✅ Formato bonito
                         }
                     },
                     datalabels: {
                         color: '#222',
                         anchor: 'end',
                         align: 'top',
-                        font: {
-                            size: 12,
-                            weight: 'bold'
-                        },
-                        formatter: (value) => `Q${value.toLocaleString()}`
+                        font: { size: 12, weight: 'bold' },
+                        formatter: (value) => value > 0 ? `Q${value.toLocaleString()}` : ''
                     }
                 },
                 hover: {
-                    mode: 'nearest', // ✅ Mejora el hover
-                    intersect: true
+                    mode: 'index',
+                    intersect: false
                 },
                 scales: {
                     x: {
@@ -231,7 +214,7 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
                     }
                 }
             },
-            plugins: [ChartDataLabels] // No olvides tener cargado ChartDataLabels
+            plugins: [ChartDataLabels] // ✅ Correcto
         });
     
         // ✅ Actualizar cuadros de total y promedio
@@ -240,7 +223,6 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
     }
     
     
-
 // ================= EVENTOS =================
 
 verDatosBtn.addEventListener("click", () => {
