@@ -65,6 +65,9 @@ async function cargarVentas(sucursal, fechaInicio, fechaFin) {
 
     mostrarTablaVentasConRango(fechas, valores, sucursal, ventasFirestore);
     mostrarGraficaVentas(fechas, valores, sucursal);
+      // Mostrar resumen total y promedio
+      calcularTotalesYPromedios(valores);
+
 }
 
 function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestore) {
@@ -96,23 +99,63 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
     const totalRow = tabla.insertRow();
     totalRow.innerHTML = `<td><strong>Total</strong></td><td></td><td><strong>${total.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
 }
+    // Cuadros de resumen total y promedio
+    function calcularTotalesYPromedios(valores) {
+        const totalVentas = valores.reduce((acc, val) => acc + val, 0);
+        const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
+
+        document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+        document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+    }
+
 
 function mostrarGraficaVentas(fechas, valores, sucursal) {
     const ctx = document.getElementById("ventasChart").getContext("2d");
     if (window.miGrafica) window.miGrafica.destroy();
 
+    // ✅ Mapear las fechas para que muestren solo dd/mm
+    const fechasFormateadas = fechas.map(fecha => {
+        const [dia, mes, anio] = fecha.split('/');
+        return `${dia}/${mes}`; // Solo dd/mm
+    });
+
+    // ✅ Definir colores por sucursal
+    const coloresSucursales = {
+        "Santa Elena": "#28a745",  // Verde
+        "Eskala": "#28a745",       // Verde
+        "San Pedro Pinula": "#28a745", // Verde
+        "Jalapa": "#dc3545",       // Rojo
+        "Zacapa": "#fd7e14",       // Naranja
+        "Poptún": "#007bff"        // Azul
+    };
+
+    // Color según sucursal o uno por defecto
+    const colorGrafica = coloresSucursales[sucursal] || "#6c757d"; // Gris por defecto
+
+    // ✅ Crear la gráfica
     window.miGrafica = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: fechas,
+            labels: fechasFormateadas, // Usar fechas dd/mm
             datasets: [{
                 label: `Ventas en ${sucursal}`,
                 data: valores,
-                backgroundColor: "#28a745"
+                backgroundColor: colorGrafica
             }]
+        },
+        options: {
+            plugins: {
+                legend: { display: true }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
     });
 }
+
 
 
 // ================= EVENTOS =================

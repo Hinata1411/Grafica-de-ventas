@@ -1,8 +1,12 @@
-// Importar referencias necesarias desde firebase-config.js
+// ================= IMPORTACIONES =================
+
 import { db, auth, signOut } from "./firebase-config.js";
 import { collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// Función para cargar ventas y actualizar la gráfica
+
+// ================= FUNCIONES =================
+
+// Función para cargar ventas y actualizar la gráfica y tabla
 async function cargarVentas(sucursal, fechaInicio = null, fechaFin = null) {
     try {
         if (!fechaInicio || !fechaFin) {
@@ -29,22 +33,21 @@ async function cargarVentas(sucursal, fechaInicio = null, fechaFin = null) {
         const fechas = [];
         const valores = [];
 
-        const fechaActual = new Date(fechaInicio);
+        let fechaIter = new Date(fechaInicio);
         const fechaFinal = new Date(fechaFin);
 
-        while (fechaInicio <= fechaFin) {
-            const fechaFormateada = new Date(fechaInicio).toISOString().split('T')[0];
-            const [anio, mes, dia] = fechaInicio.split('-');
-            const etiquetaFecha = `${dia}/${mes}`;
+        while (fechaIter <= fechaFinal) {
+            const fechaFormateada = fechaIter.toISOString().split('T')[0];
+            const [anio, mes, dia] = fechaFormateada.split('-');
+            const etiquetaFecha = `${dia}/${mes}`; // ✅ Fecha como dd/mm
 
-            fechasVentas[fechaInicio] ? valores.push(fechasVentas[fechaInicio]) : valores.push(0);
             fechas.push(etiquetaFecha);
+            valores.push(fechasVentas[fechaFormateada] || 0);
 
-            fechaInicio = new Date(fechaInicio);
-            fechaInicio.setDate(fechaInicio.getDate() + 1);
-            fechaInicio = fechaInicio.toISOString().split('T')[0];
+            fechaIter.setDate(fechaIter.getDate() + 1);
         }
 
+        // Colores por sucursal
         const coloresSucursales = {
             "Santa Elena": "#28a745",
             "Eskala": "#28a745",
@@ -53,34 +56,48 @@ async function cargarVentas(sucursal, fechaInicio = null, fechaFin = null) {
             "Zacapa": "#fd7e14",
             "Poptún": "#fd7e14"
         };
-
         const colorGrafica = coloresSucursales[sucursal] || "#007bff";
 
-        const ctx = document.getElementById("ventasChart").getContext("2d");
-        if (window.miGrafica) window.miGrafica.destroy();
-
-        window.miGrafica = new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: fechas,
-                datasets: [{
-                    label: `Ventas Diarias en ${sucursal}`,
-                    data: valores,
-                    borderColor: colorGrafica,
-                    backgroundColor: colorGrafica,
-                    borderWidth: 1
-                }]
-            }
-        });
-
+        // Mostrar gráfica y tabla
+        mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica);
         mostrarTablaVentas(fechas, valores, sucursal);
+
+        // Mostrar resumen total y promedio
+        calcularTotalesYPromedios(valores);
 
     } catch (error) {
         console.error("Error al cargar ventas:", error);
     }
 }
 
-// Mostrar ventas en la tabla
+
+// ================= FUNCIONES PARA MOSTRAR =================
+
+// Gráfica de ventas
+function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
+    const ctx = document.getElementById("ventasChart").getContext("2d");
+    if (window.miGrafica) window.miGrafica.destroy();
+
+    window.miGrafica = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: fechas,
+            datasets: [{
+                label: `Ventas Diarias en ${sucursal}`,
+                data: valores,
+                borderColor: colorGrafica,
+                backgroundColor: colorGrafica,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: { legend: { display: true } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+}
+
+// Tabla de ventas
 function mostrarTablaVentas(fechas, valores, sucursal) {
     const tablaVentasBody = document.querySelector("#tablaVentas tbody");
     tablaVentasBody.innerHTML = "";
@@ -89,21 +106,40 @@ function mostrarTablaVentas(fechas, valores, sucursal) {
 
     fechas.forEach((fecha, index) => {
         const row = tablaVentasBody.insertRow();
-        row.insertCell(0).textContent = fechas[index];
+        row.insertCell(0).textContent = fecha;
         row.insertCell(1).textContent = sucursal;
-        row.insertCell(2).textContent = valores[index].toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
-        totalVentas += valores[index];
+
+        if (valores[index] > 0) {
+            row.insertCell(2).textContent = valores[index].toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+            totalVentas += valores[index];
+        } else {
+            const cell = row.insertCell(2);
+            cell.innerHTML = "<span style='color: red;'>Ventas no ingresadas</span>";
+        }
     });
 
+    // Total de ventas
     const totalRow = tablaVentasBody.insertRow();
-    totalRow.insertCell(0).textContent = "Total";
+    totalRow.insertCell(0).innerHTML = "<strong>Total</strong>";
     totalRow.insertCell(1).textContent = "";
-    totalRow.insertCell(2).textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+    totalRow.insertCell(2).innerHTML = `<strong>${totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong>`;
     totalRow.style.fontWeight = "bold";
     totalRow.style.backgroundColor = "#f8f9fa";
 }
 
-// Evento click para ver datos
+// Cuadros de resumen total y promedio
+function calcularTotalesYPromedios(valores) {
+    const totalVentas = valores.reduce((acc, val) => acc + val, 0);
+    const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
+
+    document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+    document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+}
+
+
+// ================= EVENTOS =================
+
+// Botón para ver datos
 const verDatosBtn = document.getElementById("verDatos");
 if (verDatosBtn) {
     verDatosBtn.addEventListener("click", () => {
@@ -115,7 +151,7 @@ if (verDatosBtn) {
     });
 }
 
-// Manejo cierre de sesión
+// Botón cerrar sesión
 const logoutButton = document.getElementById("logoutButton");
 if (logoutButton) {
     logoutButton.addEventListener("click", () => {
@@ -127,6 +163,7 @@ if (logoutButton) {
     });
 }
 
+// Mostrar usuario logueado
 auth.onAuthStateChanged((user) => {
     const userInfoContainer = document.getElementById("userInfoContainer");
     if (user && userInfoContainer) {
