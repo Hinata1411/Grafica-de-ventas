@@ -73,6 +73,7 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
     const totalVentas = valores.reduce((acc, val) => acc + val, 0);
     const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
 
+    // Crear gráfica
     window.miGrafica = new Chart(ctx, {
         type: 'line',
         data: {
@@ -86,7 +87,15 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                     borderWidth: 3,
                     tension: 0.3,
                     pointBackgroundColor: colorGrafica,
-                    pointRadius: 5
+                    pointRadius: 5,
+                    datalabels: {
+                        display: true, // ✅ Solo etiquetas en ventas
+                        color: 'black',
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: (value) => value > 0 ? 'Q ' + value.toLocaleString('es-GT') : '',
+                        font: { weight: 'bold', size: 12 }
+                    }
                 },
                 {
                     label: 'Promedio de Ventas',
@@ -95,59 +104,32 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                     borderWidth: 2,
                     borderDash: [10, 5],
                     pointRadius: 0,
-                    datalabels: { display: false }, // ❌ Sin etiquetas promedio
-                    tooltip: { enabled: false } // ❌ Sin tooltip promedio
+                    datalabels: { display: false } // ❌ Quitar etiquetas en línea de promedio
                 }
             ]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: { top: 30, right: 15, bottom: 10, left: 15 }
-            },
+            interaction: { mode: 'index', intersect: false }, // ✅ Interacción cómoda
             plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        color: '#333',
-                        font: { size: 14 },
-                        padding: 20
-                    }
-                },
-                datalabels: {
-                    display: false // ❌ Ocultar todos los datalabels
-                },
+                legend: { display: true }, // ✅ Leyenda activa e interactiva
                 tooltip: {
-                    enabled: true,
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: '#333',
-                    titleFont: { size: 14 },
-                    bodyFont: { size: 12 },
-                    padding: 10,
-                    filter: (tooltipItem) => tooltipItem.dataset.label.includes('Ventas Diarias'), // ✅ Solo ventas diarias
                     callbacks: {
-                        label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString('es-GT')}`
+                        label: function (context) {
+                            // ✅ Mostrar solo ventas diarias en tooltip
+                            if (context.dataset.label === `Ventas Diarias en ${sucursal}`) {
+                                return 'Q ' + context.parsed.y.toLocaleString('es-GT');
+                            }
+                            return null; // ❌ Ocultar tooltip del promedio
+                        }
                     }
                 }
             },
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
             scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#555' }
-                },
                 y: {
                     beginAtZero: true,
-                    grid: { color: '#ddd' },
                     ticks: {
-                        color: '#555',
-                        callback: (value) => `Q${value}`
+                        callback: (value) => 'Q ' + value.toLocaleString('es-GT')
                     }
                 }
             }
@@ -180,8 +162,9 @@ function mostrarTablaVentas(fechas, valores, sucursal) {
     });
 
     const totalRow = tablaVentasBody.insertRow();
-    totalRow.innerHTML = `<td><strong>Total</strong></td><td></td><td><strong>${totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
+    totalRow.innerHTML = `<td></td><td><strong>Total</strong></td><td><strong>${totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
     totalRow.style.backgroundColor = "#f8f9fa";
+    
 }
 
 function calcularTotalesYPromedios(valores) {
@@ -202,19 +185,12 @@ document.getElementById("verDatos").addEventListener("click", () => {
 });
 
 document.getElementById("logoutButton").addEventListener("click", () => {
-    signOut(auth).then(() => window.location.href = "index.html").catch((error) => console.error("Error al cerrar sesión:", error));
-});
-
-// ✅ Fechas automáticas al cargar
-document.addEventListener("DOMContentLoaded", () => {
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById("fechaInicio").value = hoy;
-    document.getElementById("fechaFin").value = hoy;
+    signOut(auth).then(() => window.location.href = "login.html").catch((error) => console.error("Error al cerrar sesión:", error));
 });
 
 // ================= USUARIO =================
 
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged(async (user) => {
     const userInfoContainer = document.getElementById("userInfoContainer");
     const userEmailElement = document.getElementById("userEmail");
     if (user && userInfoContainer) {
@@ -222,4 +198,10 @@ auth.onAuthStateChanged((user) => {
         userEmailElement.textContent = user.email;
     }
 });
-``
+
+// ✅ Establecer fecha actual
+document.addEventListener("DOMContentLoaded", () => {
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById("fechaInicio").value = hoy;
+    document.getElementById("fechaFin").value = hoy;
+});

@@ -3,85 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
+    <title>Registro de Ventas</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .logo {
-            width: 250px;
-            height: auto;
-            display: block;
-            margin: 0 auto 20px;
-        }
-        .container {
-            max-width: 450px;
-        }
-    </style>
 </head>
-<body class="d-flex flex-column align-items-center justify-content-center vh-100 bg-light">
-    <div class="container">
-        <div class="card shadow p-4">
-            <div class="text-center">
-                <img src="Logosempresa.png" alt="Logo de la empresa" class="logo">
-            </div>
-            <h2 class="text-center mb-4">Tracking Ventas</h2>
+<body>
 
-            <form id="loginForm">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Correo Electrónico:</label>
-                    <input type="email" id="email" class="form-control form-control-lg" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Contraseña:</label>
-                    <input type="password" id="password" class="form-control form-control-lg" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
-            </form>
+
+        <!-- Contenedor para la sesión y el logo -->
+    <div class="container-fluid d-flex justify-content-between align-items-center py-3 px-5">
+        <div class="text-center mx-auto">
+            <img src="Logosempresa.png" alt="Logo de la empresa" class="logo">
+        </div>
+
+        <!-- Información de la sesión en la esquina derecha -->
+        <div id="userInfoContainer" class="d-flex align-items-center" style="display: none;">
+            <i class="bi bi-person-circle" style="font-size: 40px; color: green; margin-right: 10px;"></i>
+            <div>
+                <h5 class="mb-1" style="font-size: 16px; color: #333;">Sesión Iniciada</h5>
+                <span id="userEmail" class="fs-6 mb-3" style="color: #555;"></span>
+                <button id="logoutButton" class="btn btn-danger btn-sm">Cerrar Sesión</button>
+            </div>
         </div>
     </div>
 
-    <script type="module">
-        import { auth, signInWithEmailAndPassword } from './firebase-config.js';
-        import { db } from "./firebase-config.js";
-        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Columna izquierda: Registro de ventas -->
+            <div class="col-md-4">
+            
+                <div id="ventasContainer" class="container mt-5" style="display: block;">
+                    <!-- El contenido de ventas aquí (formulario de ventas, tabla, gráfica) -->
+                <div class="card shadow p-4">
+                    <h2 class="text-center mb-4">Registro de Ventas Diarias</h2>
+                    <form id="ventaForm">
+                        <div class="mb-3">
+                            <label for="fecha" class="form-label">Fecha:</label>
+                            <input type="date" id="fecha" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="monto" class="form-label">Monto de Venta:</label>
+                            <input type="number" id="monto" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sucursal" class="form-label">Sucursal:</label>
+                            <select id="sucursal" class="form-select" required>
+                                <option value="Jalapa">Jalapa</option>
+                                <option value="Eskala">Eskala</option>
+                                <option value="Santa Elena">Santa Elena</option>
+                                <option value="San Pedro Pinula">San Pedro Pinula</option>
+                                <option value="Zacapa">Zacapa</option>
+                                <option value="Poptún">Poptún</option>
+                            </select>
+                        </div>
+                                <!-- Botón de Ingresar con más espacio -->
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Ingresar</button>
+                    
+                    <!-- Botón de Editar con más espacio -->
+                    <button type="button" id="editarVenta" class="btn btn-warning btn-sm w-100 mb-3">Editar</button>
+                    
+                    <!-- Botón de Eliminar con más espacio -->
+                    <button type="button" id="eliminarVenta" class="btn btn-danger btn-sm w-100">Eliminar</button>
+                    </form>
+                </div>
+                <!-- Contenedor para mostrar el icono y el correo del usuario -->
+                <div id="userInfo" class="card shadow p-3 mb-3" style="display: none;">
+                    <div class="d-flex flex-column align-items-center">
+                        <!-- Icono de Persona -->
+                        
+                        <i class="bi bi-person-circle" style="font-size: 50px; margin-bottom: 10px;"></i>
+                
+                        <!-- Texto de "Sesión Iniciada" -->
+                        <h5 class="mb-1">Sesión Iniciada</h5>
+                        
+                        <!-- Correo del usuario -->
+                        <span id="userEmail" class="fs-6 mb-3"></span>
+                
+                        <!-- Botón de Cerrar Sesión -->
+                        <button id="logoutButton" class="btn btn-danger w-100">Cerrar Sesión</button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+            <!-- Columna derecha: Gráfica y tabla -->
+            <div class="col-md-8">
+                <!-- Parte de la gráfica y filtros por fecha -->
+                <div class="card shadow p-4 mt-4" id="graficaContainer">
+                    <h3 class="text-center">Gráfica de Ventas</h3>
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="w-45">
+                            <label for="filtroSucursal" class="form-label">Sucursal:</label>
+                            <select id="filtroSucursal" class="form-select">
+                                <option value="Jalapa">Jalapa</option>
+                                <option value="Eskala">Eskala</option>
+                                <option value="Santa Elena">Santa Elena</option>
+                                <option value="San Pedro Pinula">San Pedro Pinula</option>
+                                <option value="Zacapa">Zacapa</option>
+                                <option value="Poptún">Poptún</option>
+                            </select>
+                        </div>
+                        <div class="w-45">
+                            <label for="fechaInicio" class="form-label">Fecha de Inicio:</label>
+                            <input type="date" id="fechaInicio" class="form-control">
+                        </div>
+                        <div class="w-45">
+                            <label for="fechaFin" class="form-label">Fecha de Fin:</label>
+                            <input type="date" id="fechaFin" class="form-control">
+                        </div>
+                    </div>
+                    <button id="verDatos" class="btn btn-secondary w-100">Ver Datos</button>
+                    <canvas id="ventasChart"></canvas>
+                </div>
 
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("loginForm").addEventListener("submit", async (e) => {
-                e.preventDefault();
+                <!-- Tabla de ventas -->
+                <div class="card shadow p-4 mt-4" id="tablaContainer">
+                    <h3 class="text-center">Ventas Registradas</h3>
+                    <div class="d-flex justify-content-center mt-3">
+                       
+                     
+                    </div>
+                    <table id="tablaVentas" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Sucursal</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas de ventas se insertarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                if (email && password) {
-                    try {
-                        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                        const user = userCredential.user;
-
-                        const docRef = doc(db, "usuarios", user.uid);
-                        const docSnap = await getDoc(docRef);
-
-                        if (docSnap.exists()) {
-                            const userData = docSnap.data();
-                            localStorage.setItem('email', user.email);
-
-                            if (userData.role === "admin") {
-                                window.location.href = 'paginaadmin.html';
-                            } else {
-                                window.location.href = 'paginavisual.html';
-                            }
-                        } else {
-                            alert("No existe información del usuario en Firestore.");
-                        }
-                    } catch (error) {
-                        console.error("Error en autenticación:", error);
-                        alert("Usuario o contraseña incorrectos.");
-                    }
-                } else {
-                    alert("Por favor, completa todos los campos.");
-                }
-            });
-        });
-    </script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
