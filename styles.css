@@ -242,3 +242,10 @@ canvas {
         flex-direction: row; /* Horizontal en escritorio */
     }
 }
+
+/* ✅ Centrar completamente el contenedor del usuario en móvil */
+@media (max-width: 768px) {
+    .d-flex.justify-content-end.mt-3.mb-3 {
+        justify-content: center !important; /* Centra horizontalmente */
+    }
+}
