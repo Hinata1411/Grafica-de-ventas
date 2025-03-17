@@ -97,7 +97,8 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
     });
 
     const totalRow = tabla.insertRow();
-    totalRow.innerHTML = `<td><strong>Total</strong></td><td></td><td><strong>${total.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
+    totalRow.innerHTML = `<td></td><td><strong>Total</strong></td><td><strong>${total.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
+
 }
     // Cuadros de resumen total y promedio
     function calcularTotalesYPromedios(valores) {

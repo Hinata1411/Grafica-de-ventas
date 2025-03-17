@@ -15,14 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 </head>
 <body>
-
-<<<<<<< HEAD
-    <!-- ✅ Header con logo y usuario -->
-=======
-
-        <!-- Contenedor para la sesión y el logo -->
-         <!-- Header con logo y usuario -->
->>>>>>> parent of 396227e (Arreglo de usuarios y roles)
+    <!-- Header con logo y usuario -->
     <div class="container-fluid d-flex justify-content-between align-items-center py-3 px-5">
         <div class="text-center mx-auto">
             <img src="Logosempresa.png" alt="Logo" class="logo">
@@ -38,103 +31,61 @@
         </div>
     </div>
 
-<<<<<<< HEAD
-    <!-- ✅ Contenido principal -->
-    <div class="container-fluid mt-5">
-        <div class="row">
-            <!-- ✅ Formulario Registro -->
-            <div class="col-12 col-md-4 mb-4">
-=======
+    <!-- Contenido principal -->
     <div class="container mt-5">
         <div class="row">
             <!-- Columna izquierda: Registro de ventas -->
             <div class="col-md-4">
-            
                 <div id="ventasContainer" class="container mt-5" style="display: block;">
-                    <!-- El contenido de ventas aquí (formulario de ventas, tabla, gráfica) -->
->>>>>>> parent of 396227e (Arreglo de usuarios y roles)
-                <div class="card shadow p-4">
-                    <h2 class="text-center mb-4">Registro de Ventas Diarias</h2>
-                    <form id="ventaForm">
-                        <div class="mb-3">
-                            <label for="fecha" class="form-label">Fecha:</label>
-                            <input type="date" id="fecha" class="form-control" required>
+                    <div class="card shadow p-4">
+                        <h2 class="text-center mb-4">Registro de Ventas Diarias</h2>
+                        <form id="ventaForm">
+                            <div class="mb-3">
+                                <label for="fecha" class="form-label">Fecha:</label>
+                                <input type="date" id="fecha" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="monto" class="form-label">Monto de Venta:</label>
+                                <input type="number" id="monto" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sucursal" class="form-label">Sucursal:</label>
+                                <select id="sucursal" class="form-select" required>
+                                    <option value="Jalapa">Jalapa</option>
+                                    <option value="Eskala">Eskala</option>
+                                    <option value="Santa Elena">Santa Elena</option>
+                                    <option value="San Pedro Pinula">San Pedro Pinula</option>
+                                    <option value="Zacapa">Zacapa</option>
+                                    <option value="Poptún">Poptún</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mb-3">Ingresar</button>
+                            <button type="button" id="editarVenta" class="btn btn-warning btn-sm w-100 mb-3">Editar</button>
+                            <button type="button" id="eliminarVenta" class="btn btn-danger btn-sm w-100">Eliminar</button>
+                        </form>
+                    </div>
+                    <!-- Contenedor para mostrar el icono y el correo del usuario -->
+                    <div id="userInfo" class="card shadow p-3 mb-3" style="display: none;">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="bi bi-person-circle" style="font-size: 50px; margin-bottom: 10px;"></i>
+                            <h5 class="mb-1">Sesión Iniciada</h5>
+                            <span id="userEmail" class="fs-6 mb-3"></span>
+                            <button id="logoutButton" class="btn btn-danger w-100">Cerrar Sesión</button>
                         </div>
-                        <div class="mb-3">
-                            <label for="monto" class="form-label">Monto de Venta:</label>
-                            <input type="number" id="monto" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="sucursal" class="form-label">Sucursal:</label>
-                            <select id="sucursal" class="form-select" required>
-                                <option value="Jalapa">Jalapa</option>
-                                <option value="Eskala">Eskala</option>
-                                <option value="Santa Elena">Santa Elena</option>
-                                <option value="San Pedro Pinula">San Pedro Pinula</option>
-                                <option value="Zacapa">Zacapa</option>
-                                <option value="Poptún">Poptún</option>
-                            </select>
-                        </div>
-<<<<<<< HEAD
-                        <button type="submit" class="btn btn-primary w-100 mb-3">Ingresar</button>
-                        <button type="button" id="editarVenta" class="btn btn-warning w-100 mb-3">Editar</button>
-                        <button type="button" id="eliminarVenta" class="btn btn-danger w-100">Eliminar</button>
-=======
-                                <!-- Botón de Ingresar con más espacio -->
-                    <button type="submit" class="btn btn-primary w-100 mb-3">Ingresar</button>
-                    
-                    <!-- Botón de Editar con más espacio -->
-                    <button type="button" id="editarVenta" class="btn btn-warning btn-sm w-100 mb-3">Editar</button>
-                    
-                    <!-- Botón de Eliminar con más espacio -->
-                    <button type="button" id="eliminarVenta" class="btn btn-danger btn-sm w-100">Eliminar</button>
->>>>>>> parent of 396227e (Arreglo de usuarios y roles)
-                    </form>
-                </div>
-                <!-- Contenedor para mostrar el icono y el correo del usuario -->
-                <div id="userInfo" class="card shadow p-3 mb-3" style="display: none;">
-                    <div class="d-flex flex-column align-items-center">
-                        <!-- Icono de Persona -->
-                        
-                        <i class="bi bi-person-circle" style="font-size: 50px; margin-bottom: 10px;"></i>
-                
-                        <!-- Texto de "Sesión Iniciada" -->
-                        <h5 class="mb-1">Sesión Iniciada</h5>
-                        
-                        <!-- Correo del usuario -->
-                        <span id="userEmail" class="fs-6 mb-3"></span>
-                
-                        <!-- Botón de Cerrar Sesión -->
-                        <button id="logoutButton" class="btn btn-danger w-100">Cerrar Sesión</button>
                     </div>
                 </div>
-                
             </div>
-<<<<<<< HEAD
 
-            <!-- ✅ Gráfica y resumen -->
-            <div class="col-12 col-md-8">
-                <!-- ✅ Gráfica -->
-                <div class="card shadow p-4 mb-4">
-                    <h3 class="text-center mb-4">Gráfica de Ventas</h3>
-
-                    <div class="row mb-3">
-                        <div class="col-12 col-md-4 mb-3">
-=======
-        </div>
             <!-- Columna derecha: Gráfica y tabla -->
             <div class="col-md-8">
-                <!-- Parte de la gráfica y filtros por fecha -->
+                <!-- Gráfica y filtros -->
                 <div class="card shadow p-4 mt-4" id="graficaContainer">
                     <div id="tituloGrafica" class="text-center mb-3">
                         <h3 class="d-inline">Gráfica de Ventas</h3>
                         <div class="d-flex justify-content-center mt-2" id="leyendaGrafica"></div>
                     </div>
-                    
-
                     <div class="d-flex justify-content-between mb-3">
                         <div class="w-45">
->>>>>>> parent of 396227e (Arreglo de usuarios y roles)
                             <label for="filtroSucursal" class="form-label">Sucursal:</label>
                             <select id="filtroSucursal" class="form-select">
                                 <option value="Jalapa">Jalapa</option>
@@ -154,19 +105,6 @@
                             <input type="date" id="fechaFin" class="form-control">
                         </div>
                     </div>
-<<<<<<< HEAD
-
-                    <button id="verDatos" class="btn btn-secondary w-100 mb-4">Ver Datos</button>
-
-                    <div style="position: relative; width: 100%; min-height: 300px;">
-                        <canvas id="ventasChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- ✅ Resumen Totales -->
-                <div class="row text-center">
-                    <div class="col-12 col-md-6 mb-3">
-=======
                     <button id="verDatos" class="btn btn-secondary w-100">Ver Datos</button>
                     <canvas id="ventasChart"></canvas>
                 </div>
@@ -174,7 +112,6 @@
                 <!-- Totales y Promedio -->
                 <div class="row mt-4 text-center" id="resumenVentas">
                     <div class="col-md-6 mb-2">
->>>>>>> parent of 396227e (Arreglo de usuarios y roles)
                         <div class="card bg-success text-white p-3 shadow">
                             <h5>Total de Ventas</h5>
                             <p id="totalVentas" style="font-size: 1.5rem;">Q0.00</p>
@@ -188,32 +125,10 @@
                     </div>
                 </div>
 
-<<<<<<< HEAD
-                <!-- ✅ Tabla -->
-                <div class="card shadow p-4 mt-4">
-                    <h3 class="text-center">Ventas Registradas</h3>
-                    <div class="table-responsive">
-                        <table id="tablaVentas" class="table table-bordered mt-3">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Sucursal</th>
-                                    <th>Monto</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-=======
-
                 <!-- Tabla de ventas -->
                 <div class="card shadow p-4 mt-4" id="tablaContainer">
                     <h3 class="text-center">Ventas Registradas</h3>
-                    <div class="d-flex justify-content-center mt-3">
-                       
-                     
-                    </div>
-                    <table id="tablaVentas" class="table table-bordered">
+                    <table id="tablaVentas" class="table table-bordered mt-3">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
@@ -225,30 +140,21 @@
                             <!-- Las filas de ventas se insertarán aquí -->
                         </tbody>
                     </table>
->>>>>>> parent of 396227e (Arreglo de usuarios y roles)
                 </div>
             </div>
         </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
-
-<<<<<<< HEAD
-    <!-- ✅ Script para setear fecha actual -->
-=======
->>>>>>> parent of 396227e (Arreglo de usuarios y roles)
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const hoy = new Date().toISOString().split('T')[0];
-            
             document.getElementById("fecha").value = hoy;
             document.getElementById("fechaInicio").value = hoy;
             document.getElementById("fechaFin").value = hoy;
         });
-      </script>
-      
-
+    </script>
     <script type="module" src="script.js"></script>
 </body>
 </html>
