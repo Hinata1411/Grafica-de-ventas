@@ -249,3 +249,36 @@ canvas {
         justify-content: center !important; /* Centra horizontalmente */
     }
 }
+
+/* ✅ USER INFO GENERAL */
+.user-info-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center; /* Centrado por defecto (móviles) */
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+/* ✅ Icono */
+.user-info-container i {
+    font-size: 50px;
+    color: rgb(36, 116, 69);
+}
+
+/* ✅ En móviles (max 768px) centrado */
+@media (max-width: 768px) {
+    .user-info-container {
+        flex-direction: column; /* Icono arriba */
+        align-items: center; /* Centrado */
+        text-align: center;
+    }
+}
+
+/* ✅ En escritorio (mayor a 768px), a la derecha */
+@media (min-width: 769px) {
+    .user-info-container {
+        justify-content: flex-end;
+    }
+}
+
