@@ -194,3 +194,51 @@ canvas {
     height: auto !important;
     max-height: 400px;
 }
+
+/* ✅ Imagen de logo responsiva */
+.logo {
+    max-width: 180px;
+    height: auto;
+    margin: 0 auto;
+}
+
+/* ✅ Estilo general de usuario */
+#userInfoContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+/* ✅ Ícono de usuario */
+#userIcon {
+    font-size: 40px;
+    color: rgb(36, 116, 69);
+}
+
+/* ✅ Centrado en móviles, derecha en escritorio */
+@media (max-width: 768px) {
+    .d-flex.justify-content-end {
+        justify-content: center !important; /* Centra en móviles */
+    }
+
+    #userInfoContainer {
+        flex-direction: column; /* Apila elementos en columna */
+        gap: 5px; /* Espacio menor en móviles */
+    }
+
+    #userInfoContainer button, #userInfoContainer a {
+        width: 100%; /* Botones ocupan todo el ancho */
+    }
+}
+
+/* ✅ Mantener derecha en pantallas grandes */
+@media (min-width: 769px) {
+    .d-flex.justify-content-end {
+        justify-content: flex-end !important; /* Derecha en escritorio */
+    }
+
+    #userInfoContainer {
+        flex-direction: row; /* Horizontal en escritorio */
+    }
+}
