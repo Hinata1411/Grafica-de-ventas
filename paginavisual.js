@@ -73,7 +73,6 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
     const totalVentas = valores.reduce((acc, val) => acc + val, 0);
     const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
 
-    // Crear gráfica
     window.miGrafica = new Chart(ctx, {
         type: 'line',
         data: {
@@ -87,15 +86,7 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                     borderWidth: 3,
                     tension: 0.3,
                     pointBackgroundColor: colorGrafica,
-                    pointRadius: 5,
-                    datalabels: {
-                        display: true, // ✅ Solo etiquetas en ventas
-                        color: 'black',
-                        anchor: 'end',
-                        align: 'top',
-                        formatter: (value) => value > 0 ? 'Q ' + value.toLocaleString('es-GT') : '',
-                        font: { weight: 'bold', size: 12 }
-                    }
+                    pointRadius: 5
                 },
                 {
                     label: 'Promedio de Ventas',
@@ -104,7 +95,8 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                     borderWidth: 2,
                     borderDash: [10, 5],
                     pointRadius: 0,
-                    datalabels: { display: false } // ❌ Quitar etiquetas en línea de promedio
+                    datalabels: { display: false }, // ❌ Sin etiquetas promedio
+                    tooltip: { enabled: false } // ❌ Sin tooltip promedio
                 }
             ]
         },
@@ -112,12 +104,7 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
             responsive: true,
             maintainAspectRatio: false,
             layout: {
-                padding: {
-                    top: 30, // ✅ Espacio entre leyenda y gráfica
-                    right: 15,
-                    bottom: 10,
-                    left: 15
-                }
+                padding: { top: 30, right: 15, bottom: 10, left: 15 }
             },
             plugins: {
                 legend: {
@@ -125,32 +112,30 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                     position: 'top',
                     labels: {
                         color: '#333',
-                        font: {
-                            size: 14
-                        },
-                        padding: 20 // ✅ Espacio entre leyenda y borde superior
+                        font: { size: 14 },
+                        padding: 20
                     }
                 },
                 datalabels: {
-                    color: '#222',
-                    anchor: 'end',
-                    align: 'top',
-                    font: {
-                        size: 12,
-                        weight: 'bold'
-                    },
-                    formatter: (value) => `Q${value.toLocaleString()}`
+                    display: false // ❌ Ocultar todos los datalabels
                 },
                 tooltip: {
                     enabled: true,
+                    mode: 'index',
+                    intersect: false,
                     backgroundColor: '#333',
                     titleFont: { size: 14 },
                     bodyFont: { size: 12 },
                     padding: 10,
+                    filter: (tooltipItem) => tooltipItem.dataset.label.includes('Ventas Diarias'), // ✅ Solo ventas diarias
                     callbacks: {
-                        label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString()}`
+                        label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString('es-GT')}`
                     }
                 }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
             },
             scales: {
                 x: {
@@ -166,8 +151,7 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                     }
                 }
             }
-        }
-        ,
+        },
         plugins: [ChartDataLabels]
     });
 
@@ -221,9 +205,16 @@ document.getElementById("logoutButton").addEventListener("click", () => {
     signOut(auth).then(() => window.location.href = "index.html").catch((error) => console.error("Error al cerrar sesión:", error));
 });
 
+// ✅ Fechas automáticas al cargar
+document.addEventListener("DOMContentLoaded", () => {
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById("fechaInicio").value = hoy;
+    document.getElementById("fechaFin").value = hoy;
+});
+
 // ================= USUARIO =================
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged((user) => {
     const userInfoContainer = document.getElementById("userInfoContainer");
     const userEmailElement = document.getElementById("userEmail");
     if (user && userInfoContainer) {
@@ -231,10 +222,4 @@ auth.onAuthStateChanged(async (user) => {
         userEmailElement.textContent = user.email;
     }
 });
-
-// ✅ Establecer fecha actual
-document.addEventListener("DOMContentLoaded", () => {
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById("fechaInicio").value = hoy;
-    document.getElementById("fechaFin").value = hoy;
-});
+``
