@@ -89,7 +89,7 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
     });
 
     const totalRow = tabla.insertRow();
-    totalRow.innerHTML = `<td><strong>Total</strong></td><td></td><td><strong>${total.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
+    totalRow.innerHTML = `<td></td><td><strong>Total</strong></td><td><strong>${total.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
 }
 
 // ================= CUADROS TOTALES Y PROMEDIOS =================
@@ -133,7 +133,8 @@ function mostrarGraficaVentas(fechas, valores, sucursal) {
                     borderWidth: 3,
                     tension: 0.3,
                     pointBackgroundColor: colorGrafica,
-                    pointRadius: 5
+                    pointRadius: 5,
+                    datalabels: { display: false } // Se desactivan las etiquetas de datos
                 },
                 {
                     label: 'Promedio de Ventas',
@@ -143,7 +144,7 @@ function mostrarGraficaVentas(fechas, valores, sucursal) {
                     borderDash: [10, 5],
                     pointRadius: 0,
                     datalabels: { display: false }, // No mostrar etiquetas de promedio
-                    tooltip: { enabled: false } // No mostrar en tooltip
+                    tooltip: { enabled: false } // No mostrar tooltip para el promedio
                 }
             ]
         },
@@ -163,13 +164,16 @@ function mostrarGraficaVentas(fechas, valores, sucursal) {
                     position: 'top',
                     labels: { color: '#333', font: { size: 14 }, padding: 20 }
                 },
+                datalabels: {
+                    display: false // Se desactivan globalmente los datalabels
+                },
                 tooltip: {
                     enabled: true,
                     backgroundColor: '#333',
                     titleFont: { size: 14 },
                     bodyFont: { size: 12 },
                     padding: 10,
-                    filter: (tooltipItem) => tooltipItem.dataset.label.includes('Ventas Diarias'), // ✅ Mostrar solo ventas diarias
+                    filter: (tooltipItem) => tooltipItem.dataset.label.includes('Ventas Diarias'),
                     callbacks: {
                         label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString('es-GT')}`
                     }
@@ -194,6 +198,7 @@ function mostrarGraficaVentas(fechas, valores, sucursal) {
     document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
     document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
 }
+
 
 // ================= EVENTOS =================
 
