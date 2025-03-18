@@ -102,40 +102,59 @@ canvas {
 }
 
 /* ======================================
-   USUARIO (INFO + ICONO)
+   USUARIO (INFO + ICONO) - NUEVO DISEÑO
 ====================================== */
 #userInfoContainer {
-    background: white;
-    border-radius: 12px;
-    padding: 10px 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin: 10px 0;
+    max-width: 500px;
+    margin: 20px auto;
+    border-radius: 10px;
+    overflow: hidden;
+    /* Convertir en card con sombra */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background: #fff;
+}
+
+/* Imagen en la parte superior del contenedor */
+#userInfoContainer img {
+    max-height: 220px; /* Un tamaño adecuado para que se vea la imagen */
+    object-fit: contain;
+    width: 100%;
+    display: block;
+}
+
+/* Contenedor interno (card-body) */
+#userInfoContainer .card-body {
+    padding: 1rem;
+}
+
+/* Fila con ícono y nombre */
+.user-info-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    gap: 20px; /* Se reduce el espacio para que los elementos se agrupen más */
+    margin-bottom: 10px;
 }
 
+/* Estilo para el ícono de usuario */
 #userIcon {
-    font-size: 50px;
-    color: green;
+    font-size: 60px;
 }
 
-#userEmail {
+/* Estilo para el nombre de usuario */
+#userName {
+    font-size: 30px; /* Aumentado para que sea más grande */
     font-weight: bold;
-    color: #333;
+    color: #000;
+    text-align: center;
+    margin: 0;
 }
 
-/* Responsive para usuario */
-@media (max-width: 768px) {
-    #userInfoContainer {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    #userInfoContainer button,
-    #userInfoContainer a {
-        width: 100%;
-    }
+#logoutButton,
+#userInfoContainer a.btn {
+    width: 50%;
+    margin: 0.5rem auto;
+    display: block;
 }
 
 /* ======================================
@@ -158,20 +177,28 @@ canvas {
     h5 {
         font-size: 1.1rem;
     }
+
+    /* Ajuste específico para el contenedor de usuario en móviles */
+    #userInfoContainer .card-body {
+        padding: 0.8rem;
+    }
 }
 
-/* ✅ Separación de la gráfica respecto a otras secciones */
+/* ======================================
+   OTROS ESTILOS EXISTENTES
+====================================== */
+/* Separación de la gráfica respecto a otras secciones */
 .canvas {
     margin-bottom: 30px;
 }
 
-/* ✅ Padding en la card de gráfica */
+/* Padding en la card de gráfica */
 .card-graph {
     padding-top: 30px;
     padding-bottom: 30px;
 }
 
-/* ✅ Separación superior de la gráfica respecto a la leyenda (aunque Chart.js ya lo hace) */
+/* Separación superior de la gráfica respecto a la leyenda */
 .chart-container {
     margin-top: 30px;
 }
@@ -195,94 +222,9 @@ canvas {
     max-height: 400px;
 }
 
-/* ✅ Imagen de logo responsiva */
+/* Imagen de logo responsiva */
 .logo {
     max-width: 180px;
     height: auto;
     margin: 0 auto;
-}
-
-/* ✅ Estilo general de usuario */
-#userInfoContainer {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-align: center;
-}
-
-/* ✅ Ícono de usuario */
-#userIcon {
-    font-size: 40px;
-    color: rgb(36, 116, 69);
-}
-
-/* ✅ Centrado en móviles, derecha en escritorio */
-@media (max-width: 768px) {
-    .d-flex.justify-content-end {
-        justify-content: center !important; /* Centra en móviles */
-    }
-
-    #userInfoContainer {
-        flex-direction: column; /* Apila elementos en columna */
-        gap: 5px; /* Espacio menor en móviles */
-    }
-
-    #userInfoContainer button, #userInfoContainer a {
-        width: 100%; /* Botones ocupan todo el ancho */
-    }
-}
-
-/* ✅ Mantener derecha en pantallas grandes */
-@media (min-width: 769px) {
-    .d-flex.justify-content-end {
-        justify-content: flex-end !important; /* Derecha en escritorio */
-    }
-
-    #userInfoContainer {
-        flex-direction: row; /* Horizontal en escritorio */
-    }
-}
-
-/* ✅ Centrar completamente el contenedor del usuario en móvil */
-@media (max-width: 768px) {
-    .d-flex.justify-content-end.mt-3.mb-3 {
-        justify-content: center !important; /* Centra horizontalmente */
-    }
-}
-
-/* ✅ USER INFO GENERAL */
-.user-info-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: center; /* Centrado por defecto (móviles) */
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-}
-
-/* ✅ Icono */
-.user-info-container i {
-    font-size: 50px;
-    color: rgb(36, 116, 69);
-}
-
-/* ✅ En móviles (max 768px) centrado */
-@media (max-width: 768px) {
-    .user-info-container {
-        flex-direction: column; /* Icono arriba */
-        align-items: center; /* Centrado */
-        text-align: center;
-    }
-}
-
-/* ✅ En escritorio (mayor a 768px), a la derecha */
-@media (min-width: 769px) {
-    .user-info-container {
-        justify-content: flex-end;
-    }
-}
-
-#ventaDiv {
-    position: relative; /* o simplemente sin definir posición */
-    transition: margin-top 0.3s; /* Opcional: para un efecto más suave */
 }

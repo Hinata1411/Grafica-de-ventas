@@ -1,6 +1,7 @@
 // ================= IMPORTACIONES =================
 import { db, auth, signOut } from "./firebase-config.js";
-import { collection, getDocs, query, orderBy, where, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { collection, query, orderBy, where, addDoc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // ================= VARIABLES GLOBALES =================
 let ventaSeleccionada = null;
@@ -13,7 +14,8 @@ const logoutButton = document.getElementById("logoutButton");
 const ventaForm = document.getElementById("ventaForm");
 const editarVentaBtn = document.getElementById("editarVenta");
 const eliminarVentaBtn = document.getElementById("eliminarVenta");
-const sucursalSelect = document.getElementById("sucursal");
+const sucursalSelect = document.getElementById("sucursal"); // Select del formulario de ventas
+const filtroSucursalSelect = document.getElementById("filtroSucursal"); // Select usado para filtrar la gráfica
 
 // ================= FUNCIONES GENERALES =================
 
@@ -92,7 +94,6 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
     totalRow.innerHTML = `<td></td><td><strong>Total</strong></td><td><strong>${total.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
 }
 
-// ================= CUADROS TOTALES Y PROMEDIOS =================
 function calcularTotalesYPromedios(valores) {
     const totalVentas = valores.reduce((acc, val) => acc + val, 0);
     const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
@@ -101,7 +102,6 @@ function calcularTotalesYPromedios(valores) {
     document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
 }
 
-// ================= FUNCIÓN PARA MOSTRAR GRÁFICA =================
 function mostrarGraficaVentas(fechas, valores, sucursal) {
     const ctx = document.getElementById("ventasChart").getContext("2d");
     if (window.miGrafica) window.miGrafica.destroy();
@@ -134,7 +134,7 @@ function mostrarGraficaVentas(fechas, valores, sucursal) {
                     tension: 0.3,
                     pointBackgroundColor: colorGrafica,
                     pointRadius: 5,
-                    datalabels: { display: false } // Se desactivan las etiquetas de datos
+                    datalabels: { display: false }
                 },
                 {
                     label: 'Promedio de Ventas',
@@ -143,30 +143,19 @@ function mostrarGraficaVentas(fechas, valores, sucursal) {
                     borderWidth: 2,
                     borderDash: [10, 5],
                     pointRadius: 0,
-                    datalabels: { display: false }, // No mostrar etiquetas de promedio
-                    tooltip: { enabled: false } // No mostrar tooltip para el promedio
+                    datalabels: { display: false },
+                    tooltip: { enabled: false }
                 }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: {
-                padding: { top: 30, right: 15, bottom: 10, left: 15 }
-            },
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
+            layout: { padding: { top: 30, right: 15, bottom: 10, left: 15 } },
+            interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: { color: '#333', font: { size: 14 }, padding: 20 }
-                },
-                datalabels: {
-                    display: false // Se desactivan globalmente los datalabels
-                },
+                legend: { display: true, position: 'top', labels: { color: '#333', font: { size: 14 }, padding: 20 } },
+                datalabels: { display: false },
                 tooltip: {
                     enabled: true,
                     backgroundColor: '#333',
@@ -174,31 +163,20 @@ function mostrarGraficaVentas(fechas, valores, sucursal) {
                     bodyFont: { size: 12 },
                     padding: 10,
                     filter: (tooltipItem) => tooltipItem.dataset.label.includes('Ventas Diarias'),
-                    callbacks: {
-                        label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString('es-GT')}`
-                    }
+                    callbacks: { label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString('es-GT')}` }
                 }
             },
             hover: { mode: 'index', intersect: false },
             scales: {
                 x: { grid: { display: false }, ticks: { color: '#555' } },
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#ddd' },
-                    ticks: {
-                        color: '#555',
-                        callback: (value) => `Q${value}`
-                    }
-                }
+                y: { beginAtZero: true, grid: { color: '#ddd' }, ticks: { color: '#555', callback: (value) => `Q${value}` } }
             }
         }
     });
 
-    // Actualizar cuadros de total y promedio
     document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
     document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
 }
-
 
 // ================= EVENTOS =================
 
@@ -250,37 +228,60 @@ eliminarVentaBtn.addEventListener("click", async () => {
 });
 
 // ================= SESIÓN Y USUARIO =================
-logoutButton.addEventListener("click", () => signOut(auth).then(() => window.location.href = "index.html"));
 
-auth.onAuthStateChanged((user) => {
+logoutButton.addEventListener("click", () => 
+    signOut(auth).then(() => window.location.href = "index.html")
+);
+
+auth.onAuthStateChanged(async (user) => {
     const userInfoContainer = document.getElementById("userInfoContainer");
-    if (user && userInfoContainer) {
-        userInfoContainer.style.display = "block";
-        document.getElementById("userEmail").textContent = user.email;
+    const userNameElement = document.getElementById("userName");
+    if (user && userInfoContainer && userNameElement) {
+      userInfoContainer.style.display = "block";
+      try {
+        const userDocRef = doc(db, "usuarios", user.uid);
+        const docSnap = await getDoc(userDocRef);
+        console.log("Datos del usuario:", docSnap.data());
+        if (docSnap.exists() && docSnap.data().username) {
+          userNameElement.textContent = docSnap.data().username;
+        } else {
+          userNameElement.textContent = user.email;
+        }
+      } catch (error) {
+        console.error("Error al obtener datos del usuario:", error);
+        userNameElement.textContent = user.email;
+      }
     } else if (userInfoContainer) {
-        userInfoContainer.style.display = "none";
+      userInfoContainer.style.display = "none";
     }
 });
-
-// ================= COMPLEMENTARIAS =================
-
-// Al iniciar, cargar la fecha actual por defecto
-document.addEventListener("DOMContentLoaded", () => {
-    const fechaActual = new Date().toISOString().split('T')[0];
-    document.getElementById("fecha").value = fechaActual;
-    document.getElementById("fechaInicio").value = fechaActual;
-    document.getElementById("fechaFin").value = fechaActual;
-    const sucursalPorDefecto = sucursalSelect.value;
-});
-
-// Cambio de sucursal para filtrar ventas
+  
+// ================= SINCRONIZAR SUCURSAL =================
+// Cuando se cambia la sucursal en el formulario de ventas, se actualiza el filtro para la gráfica
+// Cuando se cambia la sucursal en el formulario de ventas, se actualiza el filtro para la gráfica
 sucursalSelect.addEventListener("change", (e) => {
     const sucursalSeleccionada = e.target.value;
+    // Actualiza el select del filtro
+    filtroSucursalSelect.value = sucursalSeleccionada;
+    // Recargar la gráfica si ya existen rangos de fecha definidos
     if (rangoFechaInicio && rangoFechaFin) {
         cargarVentas(sucursalSeleccionada, rangoFechaInicio, rangoFechaFin);
     }
 });
 
+// Cuando se cambia la sucursal en el filtro de la gráfica, se actualiza el formulario
+filtroSucursalSelect.addEventListener("change", (e) => {
+    const sucursalSeleccionada = e.target.value;
+    // Actualiza el select del formulario
+    sucursalSelect.value = sucursalSeleccionada;
+    // Recargar la gráfica si ya existen rangos de fecha definidos
+    if (rangoFechaInicio && rangoFechaFin) {
+        cargarVentas(sucursalSeleccionada, rangoFechaInicio, rangoFechaFin);
+    }
+});
+
+
+// ================= SCROLL PARA VENTA =================
 document.addEventListener("DOMContentLoaded", () => {
     const ventaDiv = document.getElementById("ventaDiv");
     if (ventaDiv) {
@@ -290,4 +291,13 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.error("No se encontró un elemento con id 'ventaDiv'");
     }
+});
+
+// ================= INICIALIZAR =================
+document.addEventListener("DOMContentLoaded", () => {
+    const fechaActual = new Date().toISOString().split('T')[0];
+    document.getElementById("fecha").value = fechaActual;
+    document.getElementById("fechaInicio").value = fechaActual;
+    document.getElementById("fechaFin").value = fechaActual;
+    registroForm.reset();
 });

@@ -22,19 +22,18 @@
 
   <!-- ✅ Header -->
   <div class="container-fluid d-flex justify-content-between align-items-center py-3 px-3">
-    <!-- ✅ Logo centrado siempre -->
-    <div class="text-center mb-2">
-      <img src="Logosempresa.png" alt="Logo" class="logo">
-    </div>
-
     <!-- ✅ Usuario (centrado en móvil, derecha en escritorio) -->
-    <div id="userInfoContainer" class="user-info-container" style="display: none;">
-      <i id="userIcon" class="bi bi-person-circle"></i>
-      <div class="d-flex flex-column align-items-center align-items-md-start">
-        <h5 class="mb-1" style="font-size: 16px; color: #333;">Sesión Iniciada</h5>
-        <span id="userEmail" class="fs-6 mb-2" style="color: #555;"></span>
-        <button id="logoutButton" class="btn btn-danger btn-sm mb-2 w-100">Cerrar Sesión</button>
-        <a href="registro.html" class="btn btn-secondary btn-sm w-100">Usuarios</a>
+    <div id="userInfoContainer" class="card">
+      <!-- Imagen en la parte superior -->
+      <img src="Logosempresa.png" alt="Logo de la empresa">
+      <div class="card-body">
+        <!-- Fila con ícono y nombre de usuario -->
+        <div class="user-info-row">
+          <i id="userIcon" class="bi bi-person-circle" style="color: rgb(32, 110, 39);"></i>
+          <h5 id="userName"></h5>
+        </div>
+        <button id="logoutButton" class="btn btn-danger btn-sm">Cerrar Sesión</button>
+        <a href="registro.html" class="btn btn-secondary btn-sm">Usuarios</a>
       </div>
     </div>
   </div>

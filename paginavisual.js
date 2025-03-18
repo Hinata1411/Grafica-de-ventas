@@ -1,7 +1,7 @@
 // ================= IMPORTACIONES =================
 import { db, auth, signOut } from "./firebase-config.js";
 import { collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
 // ================= FUNCIONES =================
 
 // Función principal para cargar ventas y actualizar gráfica, tabla y resumen
@@ -215,11 +215,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ================= USUARIO =================
 
-auth.onAuthStateChanged((user) => {
-    const userInfoContainer = document.getElementById("userInfoContainer");
-    const userEmailElement = document.getElementById("userEmail");
-    if (user && userInfoContainer) {
-        userInfoContainer.style.display = "flex";
-        userEmailElement.textContent = user.email;
+auth.onAuthStateChanged(async (user) => {
+  const userInfoContainer = document.getElementById("userInfoContainer");
+  const userNameElement = document.getElementById("userName");
+  if (user && userInfoContainer && userNameElement) {
+    userInfoContainer.style.display = "block";
+    try {
+      const userDocRef = doc(db, "usuarios", user.uid);
+      const docSnap = await getDoc(userDocRef);
+      console.log("Datos del usuario:", docSnap.data());
+      if (docSnap.exists() && docSnap.data().username) {
+        userNameElement.textContent = docSnap.data().username;
+      } else {
+        // Si no existe el campo 'username', se muestra el correo
+        userNameElement.textContent = user.email;
+      }
+    } catch (error) {
+      console.error("Error al obtener datos del usuario:", error);
+      userNameElement.textContent = user.email;
     }
+  } else if (userInfoContainer) {
+    userInfoContainer.style.display = "none";
+  }
 });
+
+

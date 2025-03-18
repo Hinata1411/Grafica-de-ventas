@@ -23,22 +23,22 @@
     <!-- ✅ CONTENEDOR GLOBAL -->
     <div class="container-fluid">
 
-        <!-- ✅ LOGO CENTRADO -->
-        <div class="text-center mt-3">
-            <img src="Logosempresa.png" alt="Logo" class="logo">
-        </div>
-
-        <!-- ✅ USUARIO (ICONO, EMAIL, BOTÓN LOGOUT y BOTÓN USUARIOS) -->
-        <div class="d-flex justify-content-end mt-3 mb-3">
-            <div id="userInfoContainer" style="display: none;">
-                <i id="userIcon" class="bi bi-person-circle"></i>
-                <div>
-                    <strong id="userEmail"></strong><br>
-                    <button id="logoutButton" class="btn btn-outline-danger btn-sm mt-2">Cerrar Sesión</button>
-                </div>
+        <div id="userInfoContainer" class="card">
+            <!-- Imagen en la parte superior -->
+            <img src="Logosempresa.png" alt="Logo de la empresa">
+            <div class="card-body">
+              <!-- Fila con ícono y nombre de usuario -->
+              <div class="user-info-row">
+                <i id="userIcon" class="bi bi-person-circle" style="color: orange;"></i>
+                <h5 id="userName"></h5>
+              </div>
+              <span id="userEmail" class="fs-6 mb-3" style="color: #555;"></span>
+              <button id="logoutButton" class="btn btn-danger btn-sm">Cerrar Sesión</button>
             </div>
-        </div>
+          </div>
+          
 
+          
         <!-- ✅ FILTROS Y GRÁFICA -->
         <div class="card shadow p-4 card-graph">
             <h3 class="text-center mb-4">Gráfica de Ventas</h3>
