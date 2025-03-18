@@ -284,14 +284,24 @@ filtroSucursalSelect.addEventListener("change", (e) => {
 // ================= SCROLL PARA VENTA =================
 document.addEventListener("DOMContentLoaded", () => {
     const ventaDiv = document.getElementById("ventaDiv");
-    if (ventaDiv) {
-        window.addEventListener("scroll", () => {
-            ventaDiv.style.marginTop = window.scrollY + "px";
-        });
-    } else {
-        console.error("No se encontró un elemento con id 'ventaDiv'");
+    if (!ventaDiv) {
+      console.error("No se encontró un elemento con id 'ventaDiv'");
+      return;
     }
-});
+    
+    // Solo aplicar el movimiento en computadoras
+    if (window.innerWidth >= 769) {
+      const maxOffset = 10000; // Límite máximo de desplazamiento (puedes ajustar este valor)
+      window.addEventListener("scroll", () => {
+        let offset = window.scrollY;
+        if (offset > maxOffset) offset = maxOffset;
+        ventaDiv.style.marginTop = offset + "px";
+      });
+    } else {
+      ventaDiv.style.marginTop = "0px";
+    }
+  });
+  
 
 // ================= INICIALIZAR =================
 document.addEventListener("DOMContentLoaded", () => {
