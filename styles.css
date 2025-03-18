@@ -282,3 +282,7 @@ canvas {
     }
 }
 
+#ventaDiv {
+    position: relative; /* o simplemente sin definir posición */
+    transition: margin-top 0.3s; /* Opcional: para un efecto más suave */
+}

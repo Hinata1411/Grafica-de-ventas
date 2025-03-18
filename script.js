@@ -281,3 +281,13 @@ sucursalSelect.addEventListener("change", (e) => {
     }
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const ventaDiv = document.getElementById("ventaDiv");
+    if (ventaDiv) {
+        window.addEventListener("scroll", () => {
+            ventaDiv.style.marginTop = window.scrollY + "px";
+        });
+    } else {
+        console.error("No se encontró un elemento con id 'ventaDiv'");
+    }
+});
