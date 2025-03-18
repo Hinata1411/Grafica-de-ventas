@@ -289,12 +289,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     
-    // Solo aplicar el movimiento en computadoras
-    if (window.innerWidth >= 769) {
-      const maxOffset = 10000; // Límite máximo de desplazamiento (puedes ajustar este valor)
+    if (window.innerWidth >= 769) { // Solo en escritorio
+      let factor = 0.8; // Valor por defecto para otros navegadores
+      const ua = navigator.userAgent;
+      if (ua.includes("Chrome") && !ua.includes("Edg")) {
+        factor = 0.5; // Factor menor para Chrome
+      }
+      
       window.addEventListener("scroll", () => {
-        let offset = window.scrollY;
-        if (offset > maxOffset) offset = maxOffset;
+        const offset = window.scrollY * factor;
         ventaDiv.style.marginTop = offset + "px";
       });
     } else {
@@ -302,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   
-
+  
 // ================= INICIALIZAR =================
 document.addEventListener("DOMContentLoaded", () => {
     const fechaActual = new Date().toISOString().split('T')[0];
