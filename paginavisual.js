@@ -65,7 +65,6 @@ async function cargarVentas(sucursal, fechaInicio = null, fechaFin = null) {
 }
 
 // ================= FUNCIONES PARA MOSTRAR =================
-
 function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
     const ctx = document.getElementById("ventasChart").getContext("2d");
     if (window.miGrafica) window.miGrafica.destroy();
@@ -116,6 +115,9 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                         padding: 20
                     }
                 },
+                datalabels: {
+                    display: false // ❌ Ocultar todos los datalabels
+                },
                 tooltip: {
                     enabled: true,
                     mode: 'index',
@@ -148,13 +150,16 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                     }
                 }
             }
-        },
+        }
+        // Se ha removido el uso del plugin ChartDataLabels para que no se muestren los datos en cada punto
     });
 
-    // ✅ Actualizar cards
+    // Actualizar cards
     document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
     document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
 }
+
+
 
 function mostrarTablaVentas(fechas, valores, sucursal) {
     const tablaVentasBody = document.querySelector("#tablaVentas tbody");
@@ -176,7 +181,7 @@ function mostrarTablaVentas(fechas, valores, sucursal) {
     });
 
     const totalRow = tablaVentasBody.insertRow();
-    totalRow.innerHTML = `<td><strong>Total</strong></td><td></td><td><strong>${totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
+    totalRow.innerHTML = `<td></td><td><strong>Total</strong></td><td><strong>${totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
     totalRow.style.backgroundColor = "#f8f9fa";
 }
 
