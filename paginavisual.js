@@ -73,7 +73,6 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
     const totalVentas = valores.reduce((acc, val) => acc + val, 0);
     const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
 
-    // Crear gráfica
     window.miGrafica = new Chart(ctx, {
         type: 'line',
         data: {
@@ -87,15 +86,7 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                     borderWidth: 3,
                     tension: 0.3,
                     pointBackgroundColor: colorGrafica,
-                    pointRadius: 5,
-                    datalabels: {
-                        display: true, // ✅ Solo etiquetas en ventas
-                        color: 'black',
-                        anchor: 'end',
-                        align: 'top',
-                        formatter: (value) => value > 0 ? 'Q ' + value.toLocaleString('es-GT') : '',
-                        font: { weight: 'bold', size: 12 }
-                    }
+                    pointRadius: 5
                 },
                 {
                     label: 'Promedio de Ventas',
@@ -104,32 +95,56 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                     borderWidth: 2,
                     borderDash: [10, 5],
                     pointRadius: 0,
-                    datalabels: { display: false } // ❌ Quitar etiquetas en línea de promedio
+                    datalabels: { display: false }, // ❌ Sin etiquetas promedio
+                    tooltip: { enabled: false } // ❌ Sin tooltip promedio
                 }
             ]
         },
         options: {
             responsive: true,
-            interaction: { mode: 'index', intersect: false }, // ✅ Interacción cómoda
+            maintainAspectRatio: false,
+            layout: {
+                padding: { top: 30, right: 15, bottom: 10, left: 15 }
+            },
             plugins: {
-                legend: { display: true }, // ✅ Leyenda activa e interactiva
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: '#333',
+                        font: { size: 14 },
+                        padding: 20
+                    }
+                },
                 tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#333',
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 12 },
+                    padding: 10,
+                    filter: (tooltipItem) => tooltipItem.dataset.label.includes('Ventas Diarias'), // ✅ Solo ventas diarias
                     callbacks: {
-                        label: function (context) {
-                            // ✅ Mostrar solo ventas diarias en tooltip
-                            if (context.dataset.label === `Ventas Diarias en ${sucursal}`) {
-                                return 'Q ' + context.parsed.y.toLocaleString('es-GT');
-                            }
-                            return null; // ❌ Ocultar tooltip del promedio
-                        }
+                        label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString('es-GT')}`
                     }
                 }
             },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
             scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#555' }
+                },
                 y: {
                     beginAtZero: true,
+                    grid: { color: '#ddd' },
                     ticks: {
-                        callback: (value) => 'Q ' + value.toLocaleString('es-GT')
+                        color: '#555',
+                        callback: (value) => `Q${value}`
                     }
                 }
             }
@@ -162,9 +177,8 @@ function mostrarTablaVentas(fechas, valores, sucursal) {
     });
 
     const totalRow = tablaVentasBody.insertRow();
-    totalRow.innerHTML = `<td></td><td><strong>Total</strong></td><td><strong>${totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
+    totalRow.innerHTML = `<td><strong>Total</strong></td><td></td><td><strong>${totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
     totalRow.style.backgroundColor = "#f8f9fa";
-    
 }
 
 function calcularTotalesYPromedios(valores) {
@@ -185,23 +199,23 @@ document.getElementById("verDatos").addEventListener("click", () => {
 });
 
 document.getElementById("logoutButton").addEventListener("click", () => {
-    signOut(auth).then(() => window.location.href = "login.html").catch((error) => console.error("Error al cerrar sesión:", error));
+    signOut(auth).then(() => window.location.href = "index.html").catch((error) => console.error("Error al cerrar sesión:", error));
+});
+
+// ✅ Fechas automáticas al cargar
+document.addEventListener("DOMContentLoaded", () => {
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById("fechaInicio").value = hoy;
+    document.getElementById("fechaFin").value = hoy;
 });
 
 // ================= USUARIO =================
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged((user) => {
     const userInfoContainer = document.getElementById("userInfoContainer");
     const userEmailElement = document.getElementById("userEmail");
     if (user && userInfoContainer) {
         userInfoContainer.style.display = "flex";
         userEmailElement.textContent = user.email;
     }
-});
-
-// ✅ Establecer fecha actual
-document.addEventListener("DOMContentLoaded", () => {
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById("fechaInicio").value = hoy;
-    document.getElementById("fechaFin").value = hoy;
 });

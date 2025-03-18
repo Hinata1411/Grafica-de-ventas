@@ -1,25 +1,19 @@
 // ================= IMPORTACIONES =================
-
 import { db, auth, signOut } from "./firebase-config.js";
 import { collection, getDocs, query, orderBy, where, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-
 // ================= VARIABLES GLOBALES =================
-
 let ventaSeleccionada = null;
 let rangoFechaInicio = null;
 let rangoFechaFin = null;
 
-
 // ================= REFERENCIAS =================
-
 const verDatosBtn = document.getElementById("verDatos");
 const logoutButton = document.getElementById("logoutButton");
 const ventaForm = document.getElementById("ventaForm");
 const editarVentaBtn = document.getElementById("editarVenta");
 const eliminarVentaBtn = document.getElementById("eliminarVenta");
 const sucursalSelect = document.getElementById("sucursal");
-
 
 // ================= FUNCIONES GENERALES =================
 
@@ -65,9 +59,7 @@ async function cargarVentas(sucursal, fechaInicio, fechaFin) {
 
     mostrarTablaVentasConRango(fechas, valores, sucursal, ventasFirestore);
     mostrarGraficaVentas(fechas, valores, sucursal);
-      // Mostrar resumen total y promedio
-      calcularTotalesYPromedios(valores);
-
+    calcularTotalesYPromedios(valores);
 }
 
 function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestore) {
@@ -97,108 +89,111 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
     });
 
     const totalRow = tabla.insertRow();
-    totalRow.innerHTML = `<td></td><td><strong>Total</strong></td><td><strong>${total.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
-
+    totalRow.innerHTML = `<td><strong>Total</strong></td><td></td><td><strong>${total.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' })}</strong></td>`;
 }
-    // Cuadros de resumen total y promedio
-    function calcularTotalesYPromedios(valores) {
-        const totalVentas = valores.reduce((acc, val) => acc + val, 0);
-        const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
 
-        document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
-        document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
-    }
+// ================= CUADROS TOTALES Y PROMEDIOS =================
+function calcularTotalesYPromedios(valores) {
+    const totalVentas = valores.reduce((acc, val) => acc + val, 0);
+    const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
 
-    function mostrarGraficaVentas(fechas, valores, sucursal) {
-        const ctx = document.getElementById("ventasChart").getContext("2d");
-        if (window.miGrafica) window.miGrafica.destroy();
-    
-        const totalVentas = valores.reduce((acc, val) => acc + val, 0);
-        const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
-    
-        const coloresSucursales = {
-            "Santa Elena": "#28a745", "Eskala": "#28a745", "San Pedro Pinula": "#28a745",
-            "Jalapa": "#dc3545", "Zacapa": "#fd7e14", "Poptún": "#fd7e14"
-        };
-        const colorGrafica = coloresSucursales[sucursal] || "#6c757d";
-    
-        // ✅ Formatear las fechas solo como dd/mm
-        const fechasFormateadas = fechas.map(fecha => {
-            const [dia, mes] = fecha.split('/');
-            return `${dia}/${mes}`;
-        });
-    
-        window.miGrafica = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: fechasFormateadas, // ✅ Usar las fechas formateadas aquí
-                datasets: [
-                    {
-                        label: `Ventas Diarias en ${sucursal}`,
-                        data: valores,
-                        borderColor: colorGrafica,
-                        backgroundColor: colorGrafica,
-                        borderWidth: 3,
-                        tension: 0.3,
-                        pointBackgroundColor: colorGrafica,
-                        pointRadius: 5,
-                        datalabels: {
-                            display: true,
-                            color: 'black',
-                            anchor: 'end',
-                            align: 'top',
-                            formatter: (value) => value > 0 ? 'Q ' + value.toLocaleString('es-GT') : '',
-                            font: { weight: 'bold', size: 12 }
-                        }
-                    },
-                    {
-                        label: 'Promedio de Ventas',
-                        data: Array(valores.length).fill(promedioVentas),
-                        borderColor: 'orange',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        borderDash: [10, 5],
-                        pointRadius: 0,
-                        datalabels: { display: false }
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    legend: { display: true },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                if (context.dataset.label.includes('Ventas Diarias')) {
-                                    return 'Q ' + context.parsed.y.toLocaleString('es-GT');
-                                }
-                                return null;
-                            }
-                        }
-                    }
+    document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+    document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+}
+
+// ================= FUNCIÓN PARA MOSTRAR GRÁFICA =================
+function mostrarGraficaVentas(fechas, valores, sucursal) {
+    const ctx = document.getElementById("ventasChart").getContext("2d");
+    if (window.miGrafica) window.miGrafica.destroy();
+
+    const totalVentas = valores.reduce((acc, val) => acc + val, 0);
+    const promedioVentas = valores.length > 0 ? (totalVentas / valores.length) : 0;
+
+    const coloresSucursales = {
+        "Santa Elena": "#28a745", "Eskala": "#28a745", "San Pedro Pinula": "#28a745",
+        "Jalapa": "#dc3545", "Zacapa": "#fd7e14", "Poptún": "#fd7e14"
+    };
+    const colorGrafica = coloresSucursales[sucursal] || "#6c757d";
+
+    const fechasFormateadas = fechas.map(fecha => {
+        const [dia, mes] = fecha.split('/');
+        return `${dia}/${mes}`;
+    });
+
+    window.miGrafica = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: fechasFormateadas,
+            datasets: [
+                {
+                    label: `Ventas Diarias en ${sucursal}`,
+                    data: valores,
+                    borderColor: colorGrafica,
+                    backgroundColor: colorGrafica,
+                    borderWidth: 3,
+                    tension: 0.3,
+                    pointBackgroundColor: colorGrafica,
+                    pointRadius: 5
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) {
-                                return 'Q ' + value.toLocaleString('es-GT');
-                            }
-                        }
+                {
+                    label: 'Promedio de Ventas',
+                    data: Array(valores.length).fill(promedioVentas),
+                    borderColor: 'orange',
+                    borderWidth: 2,
+                    borderDash: [10, 5],
+                    pointRadius: 0,
+                    datalabels: { display: false }, // No mostrar etiquetas de promedio
+                    tooltip: { enabled: false } // No mostrar en tooltip
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: { top: 30, right: 15, bottom: 10, left: 15 }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: { color: '#333', font: { size: 14 }, padding: 20 }
+                },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: '#333',
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 12 },
+                    padding: 10,
+                    filter: (tooltipItem) => tooltipItem.dataset.label.includes('Ventas Diarias'), // ✅ Mostrar solo ventas diarias
+                    callbacks: {
+                        label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString('es-GT')}`
                     }
                 }
             },
-            plugins: [ChartDataLabels]
-        });
-    
-        // ✅ Actualizar cuadros de total y promedio
-        document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
-        document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
-    }
-    
-    
+            hover: { mode: 'index', intersect: false },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: '#555' } },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#ddd' },
+                    ticks: {
+                        color: '#555',
+                        callback: (value) => `Q${value}`
+                    }
+                }
+            }
+        }
+    });
+
+    // Actualizar cuadros de total y promedio
+    document.getElementById("totalVentas").textContent = totalVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+    document.getElementById("promedioVentas").textContent = promedioVentas.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ' });
+}
 
 // ================= EVENTOS =================
 
@@ -249,35 +244,9 @@ eliminarVentaBtn.addEventListener("click", async () => {
     }
 });
 
-logoutButton.addEventListener("click", () => signOut(auth).then(() => window.location.href = "login.html"));
-auth.onAuthStateChanged((user) => document.getElementById("userInfoContainer").style.display = user ? "block" : "none");
-document.addEventListener("DOMContentLoaded", () => document.getElementById("fecha").value = new Date().toISOString().split('T')[0]);
+// ================= SESIÓN Y USUARIO =================
+logoutButton.addEventListener("click", () => signOut(auth).then(() => window.location.href = "index.html"));
 
-
-// ====================== FUNCIONES COMPLEMENTARIAS ======================
-
-// Función para manejar el cambio de sucursal
-sucursalSelect.addEventListener("change", (e) => {
-    const sucursalSeleccionada = e.target.value;
-    if (rangoFechaInicio && rangoFechaFin) {
-        cargarVentas(sucursalSeleccionada, rangoFechaInicio, rangoFechaFin);
-    }
-});
-
-// Función para manejar cierre de sesión completo con ocultar información
-logoutButton.addEventListener("click", () => {
-    signOut(auth)
-        .then(() => {
-            document.getElementById("userInfoContainer").style.display = "none";
-            document.getElementById("ventasContainer").style.display = "none";
-            window.location.href = "login.html";
-        })
-        .catch((error) => {
-            console.error("Error al cerrar sesión:", error);
-        });
-});
-
-// Función para verificar y mostrar información del usuario autenticado
 auth.onAuthStateChanged((user) => {
     const userInfoContainer = document.getElementById("userInfoContainer");
     if (user && userInfoContainer) {
@@ -288,12 +257,22 @@ auth.onAuthStateChanged((user) => {
     }
 });
 
-// Al iniciar, cargar la fecha actual por defecto en el formulario
+// ================= COMPLEMENTARIAS =================
+
+// Al iniciar, cargar la fecha actual por defecto
 document.addEventListener("DOMContentLoaded", () => {
     const fechaActual = new Date().toISOString().split('T')[0];
     document.getElementById("fecha").value = fechaActual;
-
-    // Cargar sucursal por defecto si quieres cargar algo inicial
+    document.getElementById("fechaInicio").value = fechaActual;
+    document.getElementById("fechaFin").value = fechaActual;
     const sucursalPorDefecto = sucursalSelect.value;
-    
 });
+
+// Cambio de sucursal para filtrar ventas
+sucursalSelect.addEventListener("change", (e) => {
+    const sucursalSeleccionada = e.target.value;
+    if (rangoFechaInicio && rangoFechaFin) {
+        cargarVentas(sucursalSeleccionada, rangoFechaInicio, rangoFechaFin);
+    }
+});
+
