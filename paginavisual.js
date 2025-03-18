@@ -149,7 +149,6 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
                 }
             }
         },
-        plugins: [ChartDataLabels]
     });
 
     // ✅ Actualizar cards
