@@ -46,23 +46,37 @@ button, a.btn {
 .card {
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    margin-bottom: 20px;
-    padding: 1rem;
+    margin-bottom: 5px;
+    padding: 0.5rem;
     border: none;
-}
-
-/* Cards de resumen */
-.card h5 {
-    font-size: 1.2rem;
+    color: #030303; /* Texto blanco para fondos oscuros */
+  }
+  
+  /* Estilo unificado para los títulos (h5) de las cards */
+  .card h5 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;           /* Espacio entre la imagen y el texto */
+    font-size: 1.5rem;
     margin-bottom: 10px;
-}
-
-.card p {
-    font-size: 1.6rem;
-    margin: 0;
+  }
+  
+  /* Estilo para las imágenes dentro de los títulos */
+  .card h5 img {
+    height: 70px;          /* Tamaño uniforme para ambas imágenes */
+    margin-right: 0.5rem;
+    filter: brightness(0) invert(1); /* Convierte la imagen a blanco */
+  }
+  
+  /* Ajustes para el párrafo que muestra la cantidad */
+  .card p {
+    font-size: 2rem;
     font-weight: bold;
-}
-
+    text-align: center;
+    margin: 0.5rem 0 0;
+  }
+  
 /* ======================================
    TABLAS RESPONSIVE
 ====================================== */
@@ -228,3 +242,133 @@ canvas {
     height: auto;
     margin: 0 auto;
 }
+
+/* ======================================
+   NUEVOS ESTILOS PARA LA BARRA DE NAVEGACIÓN Y CONTENIDO
+====================================== */
+/* Barra de navegación lateral */
+.sidebar {
+    min-height: 100vh;
+    width: 250px;
+    background-color: #ffffff;
+    border-right: 1px solid #dee2e6;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem 1rem;
+}
+
+.sidebar .nav {
+    margin-top: 1rem;
+}
+
+.sidebar .nav-link {
+    color: #333;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link:focus {
+    background-color: #e9ecef;
+    text-decoration: none;
+}
+
+.sidebar .submenu .nav-link {
+    padding-left: 30px;
+    font-size: 0.95rem;
+}
+
+.sidebar .card {
+    margin-top: 2rem;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Contenido principal */
+.content {
+    flex-grow: 1;
+    padding: 2rem;
+}
+
+/* Responsivo para la barra de navegación */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 220px;
+        padding: 1rem;
+    }
+    
+    .content {
+        padding: 1rem;
+    }
+}
+
+  .h4-instrucciones {
+    color: #333;               /* Un gris oscuro, menos agresivo que el negro puro */
+    font-size: 0.85rem;         /* Tamaño de fuente pequeño */
+    text-align: center;         /* Centrado */
+    margin: 0.5rem auto;         /* Margen superior e inferior, y centrado horizontal */
+    font-weight: 400;          /* Peso normal para un aspecto elegante */
+    letter-spacing: 0.5px;      /* Espaciado sutil entre letras */
+    line-height: 1.5;          /* Altura de línea para mejorar la legibilidad */
+    max-width: 90%;            /* Limita el ancho para que no se extienda demasiado */
+    padding: 0.5rem 1rem;      /* Espacio interno para separar el texto del borde */
+  }
+  
+  h3.text-center.mb-4 {
+    color: #000; /* Negro */
+  }
+
+/* ======================================
+   ESTILOS PARA LA VISTA DE GRÁFICAS
+====================================== */
+#graficasView {
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+  
+  #graficasView h3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #000; /* Título en negro */
+  }
+  
+  #graficasView .card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    padding: 1rem;
+    border: none;
+    background-color: #fff;
+  }
+  
+  #graficasView label {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  #graficasView .form-control {
+    border-radius: 4px;
+  }
+  
+  /* Ajuste para el contenedor de la gráfica */
+  .chart-container {
+    margin-top: 20px;
+    /* Si deseas agregar un borde o background, puedes hacerlo aquí */
+  }
+  
+  /* Oculta el mensaje en pantallas de tamaño mediano y superiores */
+@media (min-width: 768px) {
+    .mobile-alert {
+      display: none;
+    }
+  }
+  
+  /* Clase para aplicar margen izquierdo a la imagen */
+.img-margin-left {
+    margin-left: 20px;
+  }
+  
+

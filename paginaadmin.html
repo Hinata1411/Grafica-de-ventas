@@ -1,160 +1,507 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Ventas</title>
-
-  <!-- ✅ Bootstrap -->
+  <title>Pagina Admin</title>
+  <!-- Bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-
-  <!-- ✅ Estilos personalizados -->
+  <!-- CSS personalizado -->
   <link rel="stylesheet" href="styles.css">
-
-  <!-- ✅ Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <style>
+    /* Botón toggle para dispositivos móviles */
+    #toggleSidebarBtn {
+      display: none;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #086939;
+      color: #a4d8c2;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      z-index: 1100;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1090;
+      }
+      #toggleSidebarBtn {
+        display: block;
+      }
+      .sidebar.active {
+        display: flex;
+      }
+    }
+  </style>
 </head>
-
 <body>
-
-  <!-- ✅ Header -->
-  <div class="container-fluid d-flex justify-content-between align-items-center py-3 px-3">
-    <!-- ✅ Usuario (centrado en móvil, derecha en escritorio) -->
-    <div id="userInfoContainer" class="card">
-      <!-- Imagen en la parte superior -->
-      <img src="Logosempresa.png" alt="Logo de la empresa">
-      <div class="card-body">
-        <!-- Fila con ícono y nombre de usuario -->
-        <div class="user-info-row">
-          <i id="userIcon" class="bi bi-person-circle" style="color: rgb(32, 110, 39);"></i>
-          <h5 id="userName"></h5>
+  <!-- Botón para toggle de la barra lateral en móvil -->
+  <button id="toggleSidebarBtn">
+    <i class="bi bi-list" style="font-size: 1.5rem;"></i>
+  </button>
+  
+  <div class="d-flex">
+    <!-- Barra de navegación lateral -->
+    <nav class="sidebar">
+      <div>
+        <!-- Logo de la empresa -->
+        <div class="text-center mb-4">
+          <img src="img/Logosempresa.png" alt="Logo de la empresa" class="img-fluid" style="max-height: 110px;">
         </div>
-        <button id="logoutButton" class="btn btn-danger btn-sm">Cerrar Sesión</button>
-        <a href="registro.html" class="btn btn-secondary btn-sm">Usuarios</a>
+        
+        <!-- Menú de navegación -->
+        <ul class="nav flex-column">
+          <li class="nav-item mt-3">
+            <a class="nav-link fw-bold" href="#" id="ventasParent">
+              <img src="img/precio.png" alt="precio" width="40px">
+              Ventas <i class="bi bi-caret-down-fill ms-1"></i>
+            </a>
+            <ul class="nav flex-column submenu d-none" id="ventasSubmenu">
+              <li class="nav-item">
+                <!-- Registro de Ventas -->
+                <a class="nav-link" href="#" id="registroVentasLink">
+                  <img src="img/mas.png" alt="registro" width="30px">
+                  Registro de Ventas
+                </a>
+              </li>
+              <li class="nav-item">
+                <!-- Ver Ventas -->
+                <a class="nav-link" href="#" id="verVentasLink">
+                  <img src="img/verificar.png" alt="verificar" width="30px">
+                  Ver Ventas
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item mt-3">
+            <a class="nav-link fw-bold" href="#" id="graficasLink">
+              <img src="img/grafica.png" alt="grafica" width="40px">
+              Gráficas
+            </a>
+          </li>
+          <li class="nav-item mt-3">
+            <a class="nav-link fw-bold" href="#" id="usuariosLink">
+              <img src="img/usuario.png" alt="usuario" width="40px">
+              Usuarios
+            </a>
+          </li>
+        </ul>
+        <hr class="my-3">
+        <!-- Información del usuario y botón de cerrar sesión -->
+        <div id="userInfoContainer" class="card">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-center mb-2">
+              <i id="userIcon" class="bi bi-person-circle me-2" style="font-size: 1.5rem; color: rgb(32, 110, 39);"></i>
+              <h5 id="userName" class="mb-0" style="font-size: 1.2rem;">Usuario</h5>
+            </div>
+            <button id="logoutButton" class="btn btn-danger btn-sm w-100">Cerrar Sesión</button>
+          </div>
+        </div>
+    </nav>
+
+    <!-- Área de contenido principal -->
+    <div class="content flex-grow-1 p-4" id="contentArea">
+      <!-- Vista por defecto: Mensaje de bienvenida -->
+      <div id="welcomeMessage" class="text-center">
+        <h1>Bienvenido al sistema</h1>
+        <h2>Trackin de ventas</h2>
       </div>
     </div>
   </div>
 
-  <!-- ✅ Contenido principal -->
-  <div class="container-fluid mt-4">
-    <div class="row">
-      <!-- ✅ Formulario Registro -->
-      <div class="col-12 col-lg-4 mb-4" id="ventaDiv">
-        <div class="card shadow p-4">
-          <h2 class="text-center mb-4">Registro de Ventas Diarias</h2>
-          <form id="ventaForm">
-            <div class="mb-3">
-              <label for="fecha" class="form-label">Fecha:</label>
-              <input type="date" id="fecha" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="monto" class="form-label">Monto de Venta:</label>
-              <input type="number" id="monto" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="sucursal" class="form-label">Sucursal:</label>
-              <select id="sucursal" class="form-select" required>
-                <option value="Jalapa">Jalapa</option>
-                <option value="Eskala">Eskala</option>
-                <option value="Santa Elena">Santa Elena</option>
-                <option value="San Pedro Pinula">San Pedro Pinula</option>
-                <option value="Zacapa">Zacapa</option>
-                <option value="Poptún">Poptún</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-3">Ingresar</button>
-            <button type="button" id="editarVenta" class="btn btn-warning w-100 mb-3">Editar</button>
-            <button type="button" id="eliminarVenta" class="btn btn-danger w-100">Eliminar</button>
-          </form>
-        </div>
+  <!-- Registro de Ventas -->
+  <template id="registroVentasTemplate">
+    <div id="registrarVentas">
+      <!-- Formulario de Registro de Ventas -->
+      <div class="card shadow p-4 mb-4">
+        <h2 class="text-center mb-4">Registro de Ventas Diarias</h2>
+        <form id="ventaForm">
+          <div class="mb-3">
+            <label for="fecha" class="form-label">Fecha:</label>
+            <input type="date" id="fecha" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="monto" class="form-label">Monto de Venta:</label>
+            <input type="number" id="monto" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="sucursal" class="form-label">Sucursal:</label>
+            <select id="sucursal" class="form-select" required>
+              <option value="Jalapa">Jalapa</option>
+              <option value="Eskala">Eskala</option>
+              <option value="Santa Elena">Santa Elena</option>
+              <option value="San Pedro Pinula">San Pedro Pinula</option>
+              <option value="Zacapa">Zacapa</option>
+              <option value="Poptún">Poptún</option>
+            </select>
+          </div>
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Ingresar</button>
+            <button type="button" id="editarVenta" class="btn btn-warning">Editar</button>
+            <button type="button" id="eliminarVenta" class="btn btn-danger">Eliminar</button>
+          </div>
+        </form>
       </div>
 
-      <!-- ✅ Gráfica y resumen -->
-      <div class="col-12 col-lg-8">
-        <!-- ✅ Gráfica -->
-        <div class="card shadow p-4 mb-4 card-graph">
-          <h3 class="text-center mb-4">Gráfica de Ventas</h3>
-
-          <div class="row mb-3">
-            <div class="col-12 col-md-4 mb-3">
-              <label for="filtroSucursal" class="form-label">Sucursal:</label>
-              <select id="filtroSucursal" class="form-select">
-                <option value="Jalapa">Jalapa</option>
-                <option value="Eskala">Eskala</option>
-                <option value="Santa Elena">Santa Elena</option>
-                <option value="San Pedro Pinula">San Pedro Pinula</option>
-                <option value="Zacapa">Zacapa</option>
-                <option value="Poptún">Poptún</option>
-              </select>
-            </div>
-            <div class="col-12 col-md-4 mb-3">
-              <label for="fechaInicio" class="form-label">Fecha Inicio:</label>
-              <input type="date" id="fechaInicio" class="form-control">
-            </div>
-            <div class="col-12 col-md-4 mb-3">
-              <label for="fechaFin" class="form-label">Fecha Fin:</label>
-              <input type="date" id="fechaFin" class="form-control">
-            </div>
+      <!-- Filtros y Tabla para Registro de Ventas -->
+      <div class="card shadow p-4">
+        <h3 class="text-center mb-4">Ventas Registradas</h3>
+        <!-- Filtros -->
+        <div class="row mb-3">
+          <div class="col-12 col-md-4">
+            <label for="filtroSucursal" class="form-label">Sucursal:</label>
+            <select id="filtroSucursal" class="form-select">
+              <option value="">Todas</option>
+              <option value="Jalapa">Jalapa</option>
+              <option value="Eskala">Eskala</option>
+              <option value="Santa Elena">Santa Elena</option>
+              <option value="San Pedro Pinula">San Pedro Pinula</option>
+              <option value="Zacapa">Zacapa</option>
+              <option value="Poptún">Poptún</option>
+            </select>
           </div>
-
-          <button id="verDatos" class="btn btn-secondary w-100 mb-4">Ver Datos</button>
-
-          <div class="chart-container" style="position: relative; width: 100%; min-height: 300px;">
-            <canvas id="ventasChart"></canvas>
+          <div class="col-12 col-md-4">
+            <label for="fechaInicio" class="form-label">Fecha Inicio:</label>
+            <input type="date" id="fechaInicio" class="form-control">
+          </div>
+          <div class="col-12 col-md-4">
+            <label for="fechaFin" class="form-label">Fecha Fin:</label>
+            <input type="date" id="fechaFin" class="form-control">
           </div>
         </div>
+        <div class="mb-4">
+          <button id="verDatos" class="btn btn-secondary w-100">Filtrar Ventas</button>
+        </div>
+        <!-- Tabla de Ventas -->
+        <div class="table-responsive">
+          <table id="tablaVentas" class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Sucursal</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Aquí se mostrarán las ventas -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </template>
 
-        <!-- ✅ Resumen Totales -->
-        <div class="row text-center">
+  <!-- Ver Ventas -->
+  <template id="verVentasTemplate">
+    <div id="verVentas">
+      <!-- Filtros para Ver Ventas -->
+      <div class="card shadow p-4 mb-4">
+        <h3 class="text-center mb-4">Ventas Registradas</h3>
+        <div class="row mb-3">
+          <div class="col-12 col-md-4">
+            <label for="filtroSucursalVer" class="form-label">Sucursal:</label>
+            <select id="filtroSucursalVer" class="form-select">
+              <option value="">Todas</option>
+              <option value="Jalapa">Jalapa</option>
+              <option value="Eskala">Eskala</option>
+              <option value="Santa Elena">Santa Elena</option>
+              <option value="San Pedro Pinula">San Pedro Pinula</option>
+              <option value="Zacapa">Zacapa</option>
+              <option value="Poptún">Poptún</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-4">
+            <label for="fechaInicioVer" class="form-label">Fecha Inicio:</label>
+            <input type="date" id="fechaInicioVer" class="form-control">
+          </div>
+          <div class="col-12 col-md-4">
+            <label for="fechaFinVer" class="form-label">Fecha Fin:</label>
+            <input type="date" id="fechaFinVer" class="form-control">
+          </div>
+        </div>
+        <div class="mb-4">
+          <button id="verDatosVer" class="btn btn-secondary w-100">Filtrar Ventas</button>
+        </div>
+        
+
+                <!-- Bloques para Total y Promedio -->
+        <div class="row text-center mt-4">
+          <!-- Card: Total de Ventas -->
           <div class="col-12 col-md-6 mb-3">
-            <div class="card bg-success text-white p-3 shadow">
-              <h5>Total de Ventas</h5>
-              <p id="totalVentas" style="font-size: 1.5rem;">Q0.00</p>
+            <div class="card bg-success text-white p-3 shadow" style="height: 100%; ">
+              <div class="row align-items-center">
+                <!-- Columna para el ícono -->
+                <div class="col-auto">
+                  <img 
+                    src="img/salario.png" 
+                    alt="Total Icon" 
+                    class="img-icon-white img-margin-left" 
+                    style="width: 70px; height: 70px;
+                    filter: brightness(0) invert(1);;" 
+                  />
+                </div>
+                <!-- Columna para el texto -->
+                <div class="col text-start">
+                  <h5 class="mb-1">Total de Ventas</h5>
+                  <p 
+                    id="totalVentasVer" 
+                    class="display-6 mb-0"
+                    style="font-weight: bold;"
+                  >
+                    Q0.00
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Card: Promedio de Ventas -->
           <div class="col-12 col-md-6 mb-3">
-            <div class="card bg-warning text-white p-3 shadow">
-              <h5>Promedio de Ventas</h5>
-              <p id="promedioVentas" style="font-size: 1.5rem;">Q0.00</p>
+            <div class="card bg-warning text-white p-3 shadow" style="height: 100%;">
+              <div class="row align-items-center">
+                <!-- Columna para el ícono -->
+                <div class="col-auto">
+                  <img 
+                    src="img/mano.png" 
+                    alt="Promedio Icon" 
+                    class="img-icon-white img-margin-left" 
+                    style="width: 70px; height: 70px;
+                    filter: brightness(0) invert(1);" 
+                  />
+                </div>
+                <!-- Columna para el texto -->
+                <div class="col text-start">
+                  <h5 class="mb-1">Promedio de Ventas</h5>
+                  <p 
+                    id="promedioVentasVer" 
+                    class="display-6 mb-0" 
+                    style="font-weight: bold;"
+                  >
+                    Q0.00
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h4 class="h4-instrucciones">
+            NOTA: El total y el promedio de ventas están calculados en base a las fechas ingresadas
+          </h4>
+        </div>
+
+        
+        <!-- Tabla de Ventas para Ver Ventas -->
+        <div class="table-responsive">
+          <table id="tablaVentasVer" class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Sucursal</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Aquí se mostrarán las ventas -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Gráficas -->
+  <template id="graficasTemplate">
+    <div id="graficasView">
+      <!-- Filtros para Gráficas -->
+      <div class="card shadow p-4 mb-4">
+        <h3 class="text-center mb-4" style="color: #000;">Gráficas de Ventas</h3>
+        <div class="row mb-3">
+          <div class="col-12 col-md-4">
+            <label for="filtroSucursalGrafica" class="form-label">Sucursal:</label>
+            <select id="filtroSucursalGrafica" class="form-select">
+              <option value="">Todas</option>
+              <option value="Jalapa">Jalapa</option>
+              <option value="Eskala">Eskala</option>
+              <option value="Santa Elena">Santa Elena</option>
+              <option value="San Pedro Pinula">San Pedro Pinula</option>
+              <option value="Zacapa">Zacapa</option>
+              <option value="Poptún">Poptún</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-4">
+            <label for="fechaInicioGrafica" class="form-label">Fecha Inicio:</label>
+            <input type="date" id="fechaInicioGrafica" class="form-control">
+          </div>
+          <div class="col-12 col-md-4">
+            <label for="fechaFinGrafica" class="form-label">Fecha Fin:</label>
+            <input type="date" id="fechaFinGrafica" class="form-control">
+          </div>
+        </div>
+        <div class="mb-4">
+          <button id="filtrarGrafica" class="btn btn-secondary w-100">Ver Gráfica</button>
+        </div>
+      </div>
+  
+      <!-- Contenedor para la gráfica -->
+      <div class="card shadow p-4">
+        <!-- Contenedor del mensaje -->
+        <div class="mobile-alert">
+          <h4 class="h4-instrucciones">
+            Nota: Para disfrutar de una visualización óptima de la gráfica, gira tu dispositivo a modo horizontal.
+          </h4>
+        </div>
+        <div class="chart-container" style="position: relative; height: 400px;">
+          <canvas id="ventasChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Template de Usuarios -->
+  <template id="usuariosTemplate">
+    <div class="container my-4">
+      <!-- Encabezado -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0 text-center">Administración de Usuarios</h1>
+        <div style="width: 100px;"></div>
+      </div>
+      <div class="row">
+        <!-- Formulario de registro -->
+        <div class="col-12 col-md-6 mb-4">
+          <div class="card p-4">
+            <h2 class="h4 mb-4 text-center">Registro de Usuario</h2>
+            <form id="registroForm" autocomplete="off">
+              <div class="mb-3">
+                <label for="username" class="form-label">Nombre de Usuario</label>
+                <input type="text" id="username" class="form-control" placeholder="Ingresa tu nombre de usuario" autocomplete="off" required>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <input type="email" id="email" class="form-control" placeholder="Ingresa tu correo" autocomplete="off" required>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" id="password" class="form-control" placeholder="Ingresa tu contraseña" autocomplete="new-password" required>
+                <small class="text-muted">La contraseña debe tener al menos 6 caracteres.</small>
+              </div>
+              <div class="mb-3">
+                <label for="roleSelect" class="form-label">Rol</label>
+                <select id="roleSelect" class="form-select" required>
+                  <option value="viewer" selected>Viewer</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Registrar</button>
+            </form>
+            <!-- Mensajes de error y éxito -->
+            <div id="error-message" class="text-danger mt-2" style="display: none;"></div>
+            <div id="success-message" class="text-success mt-2" style="display: none;">
+              <p>Usuario registrado exitosamente.</p>
             </div>
           </div>
         </div>
-
-        <!-- ✅ Tabla -->
-        <div class="card shadow p-4 mt-4">
-          <h3 class="text-center">Ventas Registradas</h3>
-          <div class="table-responsive">
-            <table id="tablaVentas" class="table table-bordered mt-3">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Sucursal</th>
-                  <th>Monto</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
+        <!-- Tabla de usuarios -->
+        <div class="col-12 col-md-6 mb-4">
+          <div class="card p-4">
+            <h3 class="h5 mb-4 text-center">Usuarios Registrados</h3>
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Nombre de Usuario</th>
+                    <th>Correo</th>
+                    <th>Contraseña</th>
+                    <th>Rol</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaUsuarios"></tbody>
+              </table>
+            </div>
+            <div class="row mt-3">
+              <div class="col">
+                <button id="editarUsuarioBtn" class="btn btn-warning w-100" disabled>Editar</button>
+              </div>
+              <div class="col">
+                <button id="eliminarUsuarioBtn" class="btn btn-danger w-100" disabled>Eliminar</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </template>
+  <!-- Librería Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Script principal de navegación e inicialización -->
+  <script type="module">
+    import { initVentas, initVerVentas } from "./ventas.js";
+    import { initGraficas } from "./grafica.js";
+    import { initUsuarios } from "./registro.js";
 
-  <!-- ✅ Script para setear fecha actual -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const hoy = new Date().toISOString().split('T')[0];
-      document.getElementById("fecha").value = hoy;
-      document.getElementById("fechaInicio").value = hoy;
-      document.getElementById("fechaFin").value = hoy;
+    // Toggle del botón para la barra lateral en móvil
+    const toggleBtn = document.getElementById("toggleSidebarBtn");
+    const sidebar = document.querySelector(".sidebar");
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+    });
+
+    // Toggle del submenú de Ventas
+    const ventasParent = document.getElementById("ventasParent");
+    const ventasSubmenu = document.getElementById("ventasSubmenu");
+    ventasParent.addEventListener("click", (e) => {
+      e.preventDefault();
+      ventasSubmenu.classList.toggle("d-none");
+    });
+
+    // Listener para el enlace "Registro de Ventas"
+    const registroVentasLink = document.getElementById("registroVentasLink");
+    registroVentasLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      const registroVentasHTML = document.getElementById("registroVentasTemplate").innerHTML;
+      document.getElementById("contentArea").innerHTML = registroVentasHTML;
+      // Inicializar la lógica de Registro de Ventas
+      initVentas();
+    });
+
+    // Listener para el enlace "Ver Ventas"
+    const verVentasLink = document.getElementById("verVentasLink");
+    verVentasLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      const verVentasHTML = document.getElementById("verVentasTemplate").innerHTML;
+      document.getElementById("contentArea").innerHTML = verVentasHTML;
+      // Inicializar la lógica de Ver Ventas
+      initVerVentas();
+    });
+
+    // Listener para el enlace "Gráficas"
+    const graficasLink = document.getElementById("graficasLink");
+    graficasLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      const graficasHTML = document.getElementById("graficasTemplate").innerHTML;
+      document.getElementById("contentArea").innerHTML = graficasHTML;
+      // Inicializar la lógica de Gráficas
+      initGraficas();
+    });
+
+     // Listener para el enlace "Usuarios"
+     const usuariosLink = document.getElementById("usuariosLink");
+    usuariosLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      const usuariosHTML = document.getElementById("usuariosTemplate").innerHTML;
+      document.getElementById("contentArea").innerHTML = usuariosHTML;
+      initUsuarios();
     });
   </script>
 
-  <!-- ✅ Script funcional -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <script type="module" src="script.js"></script>
 </body>
-
 </html>
