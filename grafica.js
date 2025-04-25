@@ -204,5 +204,5 @@ export function initGraficas() {
   }
   
   // Cargar la gráfica inicial con el rango de fecha (primer día del mes actual a la fecha actual)
-  cargarGraficaVentas("", firstDayCurrentMonth, currentDate);
+  // cargarGraficaVentas("", firstDayCurrentMonth, currentDate);
 }
