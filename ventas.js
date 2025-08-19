@@ -19,6 +19,32 @@ let ventaSeleccionada = null;
 let rangoFechaInicio = null;
 let rangoFechaFin = null;
 
+// ================= UTILIDADES DE FECHA / TABLA (NUEVO) =================
+
+/**
+ * Devuelve el nombre del día de la semana (Lunes, Martes, ...) a partir de una fecha ISO (YYYY-MM-DD)
+ * usando la zona horaria de Guatemala.
+ */
+function obtenerDiaSemanaDesdeISO(fechaISO) {
+  // Usamos T00:00:00 para evitar desfaces por zona horaria
+  const d = new Date(fechaISO + "T00:00:00");
+  const dia = new Intl.DateTimeFormat("es-GT", {
+    weekday: "long",
+    timeZone: "America/Guatemala"
+  }).format(d);
+  // Capitaliza la primera letra
+  return dia.charAt(0).toUpperCase() + dia.slice(1);
+}
+
+/**
+ * Cambia el encabezado de la 2da columna de una tabla a "Día".
+ * @param {string} selectorTabla Selector CSS del elemento <table> (ej: "#tablaVentas")
+ */
+function ponerEncabezadoDia(selectorTabla) {
+  const thDia = document.querySelector(`${selectorTabla} thead th:nth-child(2)`);
+  if (thDia) thDia.textContent = "Día";
+}
+
 // ================= FUNCIONES DE VENTAS =================
 
 function limpiarFormulario() {
@@ -104,12 +130,22 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
     return;
   }
   tabla.innerHTML = "";
+
+  // Cambiar encabezado 2 a "Día"
+  ponerEncabezadoDia("#tablaVentas");
+
   let total = 0;
   etiquetas.forEach((fechaFormateada) => {
     const row = tabla.insertRow();
+    // Columna 1: Fecha (DD/MM/YYYY)
     row.insertCell(0).textContent = fechaFormateada;
-    row.insertCell(1).textContent = sucursal || "Todas";
+
+    // Columna 2: Día (Lunes, Martes, ...)
     const fechaISO = fechaFormateada.split("/").reverse().join("-");
+    const diaSemana = obtenerDiaSemanaDesdeISO(fechaISO);
+    row.insertCell(1).textContent = diaSemana;
+
+    // Columna 3: Monto
     const ventaExistente = ventasFirestore.find(v => v.fecha === fechaISO);
     if (ventaExistente) {
       row.insertCell(2).textContent = ventaExistente.monto.toLocaleString("es-GT", { style: "currency", currency: "GTQ" });
@@ -124,6 +160,7 @@ function mostrarTablaVentasConRango(etiquetas, valores, sucursal, ventasFirestor
       row.insertCell(2).innerHTML = "<span style='color: red;'>Venta no ingresada</span>";
     }
   });
+
   const totalRow = tabla.insertRow();
   totalRow.innerHTML = `<td></td><td><strong>Total</strong></td><td><strong>${total.toLocaleString("es-GT", { style: "currency", currency: "GTQ" })}</strong></td>`;
   console.log("Tabla actualizada, total ventas:", total);
@@ -342,6 +379,7 @@ async function cargarVentasVer(sucursal, fechaInicio, fechaFin) {
     }
     console.log("Fechas generadas en Ver Ventas:", fechas);
     console.log("Valores generados en Ver Ventas:", valores);
+
     // Actualizar la tabla de Ver Ventas (tablaVentasVer)
     const tabla = document.querySelector("#tablaVentasVer tbody");
     if (!tabla) {
@@ -349,12 +387,23 @@ async function cargarVentasVer(sucursal, fechaInicio, fechaFin) {
       return;
     }
     tabla.innerHTML = "";
+
+    // Cambiar encabezado 2 a "Día"
+    ponerEncabezadoDia("#tablaVentasVer");
+
     let total = 0;
     fechas.forEach((fechaFormateada) => {
       const row = tabla.insertRow();
+
+      // Columna 1: Fecha (DD/MM/YYYY)
       row.insertCell(0).textContent = fechaFormateada;
-      row.insertCell(1).textContent = sucursal || "Todas";
+
+      // Columna 2: Día
       const fechaISO = fechaFormateada.split("/").reverse().join("-");
+      const diaSemana = obtenerDiaSemanaDesdeISO(fechaISO);
+      row.insertCell(1).textContent = diaSemana;
+
+      // Columna 3: Monto
       const ventaExistente = ventasFirestore.find(v => v.fecha === fechaISO);
       if (ventaExistente) {
         row.insertCell(2).textContent = ventaExistente.monto.toLocaleString("es-GT", { style: "currency", currency: "GTQ" });
@@ -363,6 +412,7 @@ async function cargarVentasVer(sucursal, fechaInicio, fechaFin) {
         row.insertCell(2).innerHTML = "<span style='color: red;'>Venta no ingresada</span>";
       }
     });
+
     // Actualizar bloques de totales y promedios en Ver Ventas
     const totalVentasElem = document.getElementById("totalVentasVer");
     const promedioVentasElem = document.getElementById("promedioVentasVer");
